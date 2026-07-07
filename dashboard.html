@@ -1,0 +1,694 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Teh Eha</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Poppins", sans-serif;
+      }
+      ::-webkit-scrollbar {
+        width: 0px;
+      }
+      .glass-nav {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+      .laci-card {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        position: relative;
+        overflow: hidden;
+      }
+      .laci-card::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 200px;
+        height: 200px;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 50%;
+        filter: blur(20px);
+      }
+
+      /* Animasi Modal */
+      .animate-modal-in {
+        animation: modalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+      @keyframes modalIn {
+        from {
+          opacity: 0;
+          transform: scale(0.95) translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+    </style>
+    <script>
+      if (sessionStorage.getItem("isLoggedIn") !== "true")
+        window.location.href = "login.html";
+    </script>
+  </head>
+  <body class="bg-[#f8fafc] text-slate-800 antialiased">
+    <!-- Navbar -->
+    <nav
+      class="sticky top-0 z-50 glass-nav border-b border-slate-200/60 shadow-sm"
+    >
+      <div class="max-w-6xl mx-auto p-4 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <div
+            class="w-8 h-8 bg-gradient-to-tr from-emerald-500 to-green-400 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/30"
+          >
+            <span class="text-white font-bold text-lg leading-none mt-0.5"
+              >E</span
+            >
+          </div>
+          <h1
+            class="text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-green-500 tracking-tight"
+          >
+            Buku Warung.
+          </h1>
+        </div>
+
+        <div class="flex gap-4 items-center">
+          <div
+            id="syncStatus"
+            class="hidden md:flex bg-amber-100 border border-amber-200 text-amber-700 px-3 py-1 rounded-full text-xs font-bold shadow-inner items-center gap-2"
+          >
+            <span class="animate-spin leading-none">⏳</span> Sinkron...
+          </div>
+          <a
+            href="index.html"
+            class="text-sm font-bold text-slate-400 hover:text-emerald-500 transition-colors"
+            >← Ke Kasir</a
+          >
+          <div class="hidden md:block w-px h-6 bg-slate-200"></div>
+          <button
+            onclick="logout()"
+            class="bg-red-50 border border-red-100 text-red-500 px-4 py-1.5 rounded-full text-sm font-bold hover:bg-red-500 hover:text-white transition-all"
+          >
+            Keluar
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <main
+      class="max-w-6xl mx-auto mt-6 p-4 mb-24 flex flex-col lg:flex-row gap-8"
+    >
+      <!-- KOLOM KIRI (Keuangan & Riwayat) -->
+      <div class="w-full lg:w-1/3 space-y-8">
+        <div
+          class="bg-white p-7 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-100"
+        >
+          <div
+            class="laci-card p-6 rounded-3xl shadow-lg shadow-emerald-500/30 text-white mb-6"
+          >
+            <p
+              class="text-emerald-50 text-sm font-bold uppercase tracking-wider mb-1 opacity-90"
+            >
+              Sisa Uang di Laci
+            </p>
+            <p
+              id="txtLaci"
+              class="font-black text-4xl tracking-tight relative z-10"
+            >
+              Rp 0
+            </p>
+          </div>
+
+          <div class="space-y-4 mb-6">
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+              <p
+                class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1"
+              >
+                Uang Masuk (Jualan)
+              </p>
+              <p id="txtMasuk" class="font-black text-emerald-500 text-xl">
+                Rp 0
+              </p>
+            </div>
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+              <p
+                class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1"
+              >
+                Uang Keluar (Belanja)
+              </p>
+              <p id="txtKeluar" class="font-black text-red-400 text-xl">Rp 0</p>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-3">
+            <button
+              onclick="catatPengeluaran()"
+              class="w-full bg-white border-2 border-slate-200 text-slate-600 font-bold py-3.5 rounded-2xl hover:border-slate-300 hover:bg-slate-50 transition-all"
+            >
+              📝 Catat Pengeluaran
+            </button>
+            <button
+              onclick="resetKas()"
+              class="w-full text-red-400 font-bold py-3 rounded-2xl text-sm hover:bg-red-50 transition-all"
+            >
+              Tutup Buku (Reset ke Nol)
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="bg-white p-7 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-100"
+        >
+          <div class="flex items-center gap-2 mb-5">
+            <div
+              class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600"
+            >
+              📜
+            </div>
+            <h3 class="font-extrabold text-lg text-slate-800">
+              Riwayat Hari Ini
+            </h3>
+          </div>
+          <div
+            id="riwayatList"
+            class="space-y-4 max-h-64 overflow-y-auto pr-1"
+          ></div>
+        </div>
+      </div>
+
+      <!-- KOLOM KANAN (Kelola Stok) -->
+      <div class="w-full lg:w-2/3 space-y-8">
+        <div
+          class="bg-white p-7 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-100 relative overflow-hidden"
+        >
+          <div
+            class="absolute -right-10 -top-10 w-32 h-32 bg-emerald-50 rounded-full blur-3xl opacity-60"
+          ></div>
+
+          <h3 class="font-extrabold text-xl text-slate-800 mb-6 relative z-10">
+            ➕ Tambah Barang Baru
+          </h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 relative z-10">
+            <input
+              type="text"
+              id="newNama"
+              placeholder="Nama Barang..."
+              class="md:col-span-2 px-5 py-4 bg-white border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-100 focus:border-emerald-400 outline-none font-medium shadow-sm transition-all"
+            />
+
+            <div class="relative">
+              <select
+                id="newKategori"
+                class="w-full px-5 py-4 bg-white border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-100 focus:border-emerald-400 outline-none font-bold text-slate-600 appearance-none shadow-sm transition-all"
+              >
+                <option value="Sembako">Sembako</option>
+                <option value="Minuman">Minuman</option>
+                <option value="Snack">Snack</option>
+                <option value="Lainnya">Lainnya</option>
+              </select>
+              <div
+                class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400"
+              >
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2.5"
+                    d="M19 9l-7 7-7-7"
+                  ></path>
+                </svg>
+              </div>
+            </div>
+            <input
+              type="number"
+              id="newHarga"
+              placeholder="Harga Jual"
+              class="px-5 py-4 bg-white border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-100 focus:border-emerald-400 outline-none font-medium shadow-sm transition-all"
+            />
+          </div>
+
+          <div class="flex gap-4 relative z-10">
+            <input
+              type="number"
+              id="newStok"
+              placeholder="Stok"
+              class="w-32 px-5 py-4 bg-white border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-100 focus:border-emerald-400 outline-none font-bold text-center shadow-sm transition-all"
+            />
+
+            <button
+              onclick="tambahBarang()"
+              class="flex-1 bg-gradient-to-r from-emerald-500 to-green-500 text-white font-bold text-lg py-4 rounded-2xl shadow-lg shadow-emerald-500/40 hover:shadow-emerald-500/60 active:scale-[0.98] transition-all duration-300"
+            >
+              Simpan Barang
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="bg-white p-7 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-100 h-full"
+        >
+          <h3 class="font-extrabold text-xl text-slate-800 mb-6">
+            📦 Update Stok & Data
+          </h3>
+          <div
+            id="stockManagementList"
+            class="grid grid-cols-1 gap-4 max-h-[50vh] overflow-y-auto pr-2 pt-1"
+          ></div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ================= MODAL EDIT BARANG ================= -->
+    <div
+      id="modalEdit"
+      class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 transition-all duration-300"
+    >
+      <div
+        class="bg-white rounded-[2rem] p-8 w-full max-w-md shadow-2xl animate-modal-in border border-slate-100 relative overflow-hidden"
+      >
+        <!-- Ornamen Modal -->
+        <div
+          class="absolute -right-8 -top-8 w-24 h-24 bg-blue-50 rounded-full blur-2xl opacity-60"
+        ></div>
+
+        <h3
+          class="font-extrabold text-2xl text-slate-800 mb-6 flex items-center gap-3 relative z-10"
+        >
+          <div
+            class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 shadow-inner"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2.5"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+              ></path>
+            </svg>
+          </div>
+          Edit Barang
+        </h3>
+        <input type="hidden" id="editId" />
+
+        <div class="space-y-4 mb-8 relative z-10">
+          <div>
+            <label
+              class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1"
+              >Nama Barang</label
+            >
+            <input
+              type="text"
+              id="editNama"
+              class="w-full mt-1.5 px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none font-medium transition-all"
+            />
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label
+                class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1"
+                >Kategori</label
+              >
+              <select
+                id="editKategori"
+                class="w-full mt-1.5 px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none font-bold text-slate-600 transition-all"
+              >
+                <option value="Sembako">Sembako</option>
+                <option value="Minuman">Minuman</option>
+                <option value="Snack">Snack</option>
+                <option value="Lainnya">Lainnya</option>
+              </select>
+            </div>
+            <div>
+              <label
+                class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1"
+                >Ubah Stok</label
+              >
+              <input
+                type="number"
+                id="editStok"
+                class="w-full mt-1.5 px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none font-bold text-center transition-all"
+              />
+            </div>
+          </div>
+          <div>
+            <label
+              class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1"
+              >Harga Jual (Rp)</label
+            >
+            <input
+              type="number"
+              id="editHarga"
+              class="w-full mt-1.5 px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none font-bold transition-all text-blue-600 text-lg"
+            />
+          </div>
+        </div>
+
+        <div class="flex gap-4 relative z-10">
+          <button
+            onclick="tutupModal()"
+            class="w-1/3 bg-slate-100 text-slate-500 font-bold py-4 rounded-2xl hover:bg-slate-200 transition-colors"
+          >
+            Batal
+          </button>
+          <button
+            onclick="simpanEdit()"
+            class="w-2/3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 active:scale-[0.98] transition-all flex justify-center items-center gap-2"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2.5"
+                d="M5 13l4 4L19 7"
+              ></path>
+            </svg>
+            Simpan Perubahan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // API URL DARI GOOGLE SHEETS
+      const API_URL =
+        "https://script.google.com/macros/s/AKfycbwv8oETI4cDFYp4f2MHQWvMuTKs5ZHpYYqC6EcNavfy4AsM-2ZIIXtvo7iWmc25JfoY/exec";
+
+      const formatRupiah = (angka) => "Rp " + angka.toLocaleString("id-ID");
+      let databaseBarang = JSON.parse(localStorage.getItem("db_warung")) || [];
+
+      // ==== FUNGSI CLOUD SYNC ====
+      async function ambilDataDariCloud() {
+        try {
+          const response = await fetch(API_URL);
+          const data = await response.json();
+          if (data.barang && data.barang.length > 0) {
+            databaseBarang = data.barang;
+            localStorage.setItem("db_warung", JSON.stringify(databaseBarang));
+          }
+          if (data.riwayat)
+            localStorage.setItem(
+              "riwayat_warung",
+              JSON.stringify(data.riwayat),
+            );
+
+          updateStatusUI(
+            "🟢 Tersinkron",
+            "bg-emerald-50",
+            "border-emerald-200",
+            "text-emerald-600",
+          );
+          renderManajemenStok();
+          muatKeuangan();
+        } catch (error) {
+          updateStatusUI(
+            "🔴 Offline",
+            "bg-red-50",
+            "border-red-200",
+            "text-red-600",
+          );
+          renderManajemenStok();
+          muatKeuangan();
+        }
+      }
+
+      async function simpanKeCloud() {
+        updateStatusUI(
+          "☁️ Menyimpan...",
+          "bg-blue-50",
+          "border-blue-200",
+          "text-blue-600",
+        );
+        const payload = {
+          action: "simpan_semua",
+          barang: JSON.parse(localStorage.getItem("db_warung")) || [],
+          riwayat: JSON.parse(localStorage.getItem("riwayat_warung")) || [],
+        };
+        try {
+          await fetch(API_URL, {
+            method: "POST",
+            body: JSON.stringify(payload),
+          });
+          updateStatusUI(
+            "🟢 Tersinkron",
+            "bg-emerald-50",
+            "border-emerald-200",
+            "text-emerald-600",
+          );
+        } catch (error) {
+          updateStatusUI(
+            "⚠️ Gagal Simpan",
+            "bg-red-50",
+            "border-red-200",
+            "text-red-600",
+          );
+        }
+      }
+
+      function updateStatusUI(teks, bg, border, textColor) {
+        const el = document.getElementById("syncStatus");
+        el.className = `hidden md:flex ${bg} ${border} ${textColor} border px-3 py-1 rounded-full text-xs font-bold shadow-inner items-center gap-2 transition-all`;
+        el.innerHTML = teks;
+      }
+
+      // ==== LOGIKA DASHBOARD ====
+      function muatKeuangan() {
+        let masuk = parseInt(localStorage.getItem("uang_masuk")) || 0;
+        let keluar = parseInt(localStorage.getItem("uang_keluar")) || 0;
+
+        document.getElementById("txtMasuk").innerText = formatRupiah(masuk);
+        document.getElementById("txtKeluar").innerText = formatRupiah(keluar);
+        document.getElementById("txtLaci").innerText = formatRupiah(
+          masuk - keluar,
+        );
+        renderRiwayat();
+      }
+
+      async function catatPengeluaran() {
+        let nominal = parseInt(prompt("Masukkan jumlah pengeluaran:"));
+        if (isNaN(nominal) || nominal <= 0) return;
+        let ket = prompt("Uang keluar untuk apa?");
+        if (!ket) return;
+
+        localStorage.setItem(
+          "uang_keluar",
+          (parseInt(localStorage.getItem("uang_keluar")) || 0) + nominal,
+        );
+        let riwayat = JSON.parse(localStorage.getItem("riwayat_warung")) || [];
+        riwayat.unshift({
+          id: Date.now(),
+          waktu: new Date().toLocaleString("id-ID", {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+          tipe: "Keluar",
+          keterangan: ket,
+          nominal: nominal,
+        });
+        localStorage.setItem("riwayat_warung", JSON.stringify(riwayat));
+
+        muatKeuangan();
+        await simpanKeCloud();
+      }
+
+      function renderRiwayat() {
+        const container = document.getElementById("riwayatList");
+        let riwayat = JSON.parse(localStorage.getItem("riwayat_warung")) || [];
+        if (riwayat.length === 0)
+          return (container.innerHTML = `<div class="text-center py-6"><p class="text-slate-400 font-medium">Belum ada transaksi</p></div>`);
+
+        container.innerHTML = "";
+        riwayat.forEach((log) => {
+          let isMasuk = log.tipe === "Masuk";
+          container.innerHTML += `
+                    <div class="flex justify-between items-start group">
+                        <div class="pr-2">
+                            <p class="text-xs font-bold text-slate-400 mb-0.5">${log.waktu}</p>
+                            <p class="text-sm font-bold text-slate-700 leading-tight">${log.keterangan}</p>
+                        </div>
+                        <span class="font-black text-sm ${isMasuk ? "text-emerald-500" : "text-red-400"} bg-${isMasuk ? "emerald" : "red"}-50 px-2.5 py-1.5 rounded-xl border border-${isMasuk ? "emerald" : "red"}-100">
+                            ${isMasuk ? "+" : "-"}${formatRupiah(log.nominal)}
+                        </span>
+                    </div>`;
+        });
+      }
+
+      function renderManajemenStok() {
+        const container = document.getElementById("stockManagementList");
+        container.innerHTML = "";
+
+        databaseBarang.forEach((item) => {
+          container.innerHTML += `
+                    <div class="bg-white p-5 rounded-3xl border border-slate-200 flex flex-col md:flex-row justify-between md:items-center gap-4 hover:shadow-lg hover:shadow-slate-200/40 hover:border-emerald-200 transition-all duration-300">
+                        <div class="flex-1">
+                            <span class="text-[10px] bg-slate-50 border border-slate-100 text-slate-500 px-3 py-1.5 rounded-lg font-bold uppercase tracking-wider">${item.kategori}</span>
+                            <p class="text-lg font-bold text-slate-700 mt-2">${item.nama}</p>
+                            <div class="flex items-center gap-3 mt-1">
+                                <p class="text-base font-black text-emerald-500">${formatRupiah(item.harga)}</p>
+                                <span class="w-1.5 h-1.5 bg-slate-200 rounded-full"></span>
+                                <div class="bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100">
+                                    <p class="text-xs font-bold ${item.stok <= 5 ? "text-red-500" : "text-slate-500"}">Stok: ${item.stok}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-2">
+                            <!-- Kolom Update Stok Cepat -->
+                            <input type="number" id="tambahStok_${item.id}" placeholder="+ Jml" class="w-20 p-3.5 text-sm rounded-2xl border border-slate-200 bg-slate-50 text-center outline-none focus:ring-4 focus:ring-emerald-100 focus:border-emerald-400 focus:bg-white font-bold transition-all">
+                            
+                            <button onclick="updateStok(${item.id})" title="Tambah/Kurang Stok" class="bg-slate-100 text-slate-600 font-bold px-4 py-3.5 rounded-2xl hover:bg-emerald-50 hover:text-emerald-600 transition-colors">
+                                Update
+                            </button>
+                            
+                            <div class="w-px h-8 bg-slate-200 mx-1"></div>
+                            
+                            <!-- Tombol Edit Data Keseluruhan -->
+                            <button onclick="bukaModal(${item.id})" title="Edit Data Barang" class="bg-blue-50 border border-blue-100 text-blue-500 font-bold p-3.5 rounded-2xl hover:bg-blue-500 hover:text-white hover:shadow-lg hover:shadow-blue-500/30 transition-all">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                            </button>
+                            
+                            <!-- Tombol Hapus -->
+                            <button onclick="hapusBarang(${item.id})" title="Hapus Barang" class="bg-white border border-slate-200 text-slate-400 font-bold p-3.5 rounded-2xl hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                        </div>
+                    </div>`;
+        });
+      }
+
+      // ==== LOGIKA EDIT MODAL ====
+      function bukaModal(id) {
+        let item = databaseBarang.find((b) => parseInt(b.id) === parseInt(id));
+        if (item) {
+          document.getElementById("editId").value = item.id;
+          document.getElementById("editNama").value = item.nama;
+          document.getElementById("editKategori").value =
+            item.kategori || "Sembako";
+          document.getElementById("editHarga").value = item.harga;
+          document.getElementById("editStok").value = item.stok; // Edit angka stok langsung
+
+          document.getElementById("modalEdit").classList.remove("hidden");
+        }
+      }
+
+      function tutupModal() {
+        document.getElementById("modalEdit").classList.add("hidden");
+      }
+
+      async function simpanEdit() {
+        let id = parseInt(document.getElementById("editId").value);
+        let nama = document.getElementById("editNama").value;
+        let kategori = document.getElementById("editKategori").value;
+        let harga = parseInt(document.getElementById("editHarga").value);
+        let stok = parseInt(document.getElementById("editStok").value);
+
+        if (!nama || isNaN(harga) || isNaN(stok))
+          return alert("Pastikan semua form terisi!");
+
+        let index = databaseBarang.findIndex((b) => parseInt(b.id) === id);
+        if (index !== -1) {
+          databaseBarang[index].nama = nama;
+          databaseBarang[index].kategori = kategori;
+          databaseBarang[index].harga = harga;
+          databaseBarang[index].stok = Math.max(0, stok); // Cegah minus
+
+          localStorage.setItem("db_warung", JSON.stringify(databaseBarang));
+          renderManajemenStok();
+          tutupModal();
+
+          await simpanKeCloud();
+        }
+      }
+
+      async function tambahBarang() {
+        const nama = document.getElementById("newNama").value,
+          kategori = document.getElementById("newKategori").value,
+          harga = parseInt(document.getElementById("newHarga").value),
+          stok = parseInt(document.getElementById("newStok").value);
+        if (!nama || !harga || isNaN(stok))
+          return alert("Isi form dengan lengkap!");
+
+        databaseBarang.push({
+          id: Math.floor(Math.random() * 1000000),
+          nama,
+          kategori,
+          harga,
+          stok,
+        });
+        localStorage.setItem("db_warung", JSON.stringify(databaseBarang));
+
+        document.getElementById("newNama").value = "";
+        document.getElementById("newHarga").value = "";
+        document.getElementById("newStok").value = "";
+        renderManajemenStok();
+        await simpanKeCloud();
+      }
+
+      async function updateStok(id) {
+        let jml = parseInt(document.getElementById(`tambahStok_${id}`).value);
+        if (!jml) return;
+        let dbItem = databaseBarang.find(
+          (b) => parseInt(b.id) === parseInt(id),
+        );
+        if (dbItem) {
+          dbItem.stok = Math.max(0, dbItem.stok + jml);
+          localStorage.setItem("db_warung", JSON.stringify(databaseBarang));
+          renderManajemenStok();
+          document.getElementById(`tambahStok_${id}`).value = ""; // Kosongin inputnya
+          await simpanKeCloud();
+        }
+      }
+
+      async function hapusBarang(id) {
+        if (confirm("Yakin hapus barang ini?")) {
+          databaseBarang = databaseBarang.filter(
+            (b) => parseInt(b.id) !== parseInt(id),
+          );
+          localStorage.setItem("db_warung", JSON.stringify(databaseBarang));
+          renderManajemenStok();
+          await simpanKeCloud();
+        }
+      }
+
+      async function resetKas() {
+        if (confirm("Buku warung akan di-reset jadi 0?")) {
+          localStorage.setItem("uang_masuk", "0");
+          localStorage.setItem("uang_keluar", "0");
+          localStorage.setItem("riwayat_warung", "[]");
+          muatKeuangan();
+          await simpanKeCloud();
+        }
+      }
+
+      function logout() {
+        sessionStorage.removeItem("isLoggedIn");
+        window.location.href = "login.html";
+      }
+
+      // Init Data Cloud Pertama Kali
+      ambilDataDariCloud();
+    </script>
+  </body>
+</html>
