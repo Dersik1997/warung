@@ -37,7 +37,6 @@
     </style>
   </head>
   <body class="bg-[#f8fafc] text-slate-800 antialiased">
-    <!-- Navbar Lebih Kompak & Formal untuk HP -->
     <nav
       class="sticky top-0 z-50 glass-nav border-b border-slate-200/60 shadow-sm"
     >
@@ -63,7 +62,6 @@
           </h1>
         </a>
 
-        <!-- Indikator Cloud Formal -->
         <div
           id="syncStatus"
           class="bg-white border border-slate-200 text-slate-600 px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-bold shadow-sm flex items-center gap-2 transition-all"
@@ -108,15 +106,17 @@
                 ></path>
               </svg>
             </div>
+            <!-- Panggil fungsi debounceSearch biar nggak lag -->
             <input
               type="text"
               id="searchInput"
               placeholder="Cari nama barang..."
-              onkeyup="filterBarang()"
+              onkeyup="debounceSearch()"
               class="w-full pl-12 pr-4 py-3.5 md:pl-14 md:py-4 rounded-2xl md:rounded-3xl border border-slate-200 shadow-sm bg-white focus:ring-4 focus:ring-emerald-100 focus:border-emerald-400 outline-none text-base md:text-lg font-medium transition-all"
             />
           </div>
 
+          <!-- Filter Kategori Lengkap -->
           <div
             class="flex gap-2.5 overflow-x-auto pb-4 mb-2 whitespace-nowrap scroll-smooth"
           >
@@ -144,6 +144,24 @@
             >
               Snack
             </button>
+            <button
+              onclick="pilihKategori('Obat', this)"
+              class="kategori-btn bg-white text-slate-500 hover:bg-slate-50 px-5 py-2.5 md:px-6 md:py-3 rounded-xl md:rounded-2xl border border-slate-200 font-bold text-xs md:text-sm transition-all duration-300"
+            >
+              Obat
+            </button>
+            <button
+              onclick="pilihKategori('Kecantikan', this)"
+              class="kategori-btn bg-white text-slate-500 hover:bg-slate-50 px-5 py-2.5 md:px-6 md:py-3 rounded-xl md:rounded-2xl border border-slate-200 font-bold text-xs md:text-sm transition-all duration-300"
+            >
+              Kecantikan
+            </button>
+            <button
+              onclick="pilihKategori('Lainnya', this)"
+              class="kategori-btn bg-white text-slate-500 hover:bg-slate-50 px-5 py-2.5 md:px-6 md:py-3 rounded-xl md:rounded-2xl border border-slate-200 font-bold text-xs md:text-sm transition-all duration-300"
+            >
+              Lainnya
+            </button>
           </div>
 
           <div
@@ -161,7 +179,6 @@
               class="absolute -right-10 -top-10 w-32 h-32 bg-emerald-50 rounded-full blur-3xl opacity-60"
             ></div>
 
-            <!-- Header Keranjang Formal dengan Icon SVG -->
             <div
               class="flex justify-between items-center mb-5 md:mb-6 relative z-10"
             >
@@ -217,33 +234,55 @@
               </p>
             </div>
 
-            <button
-              id="btnBayar"
-              onclick="prosesPembayaran()"
-              class="relative z-10 w-full bg-gradient-to-r from-emerald-500 to-green-500 text-white font-bold text-lg md:text-xl py-4 rounded-2xl shadow-lg shadow-emerald-500/40 hover:shadow-emerald-500/60 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
-            >
-              <svg
-                class="w-5 h-5 md:w-6 md:h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            <!-- Dua Tombol Aksi Kasir -->
+            <div class="flex gap-3 relative z-10">
+              <button
+                id="btnKasbon"
+                onclick="prosesKasbon()"
+                class="w-1/3 bg-amber-50 border border-amber-200 text-amber-600 font-bold text-sm md:text-base py-3.5 rounded-2xl shadow-sm hover:bg-amber-100 active:scale-[0.98] transition-all flex flex-col items-center justify-center gap-1"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2.5"
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                ></path>
-              </svg>
-              Simpan Transaksi
-            </button>
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2.5"
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                  ></path>
+                </svg>
+                Kasbon
+              </button>
+              <button
+                id="btnBayar"
+                onclick="prosesPembayaran()"
+                class="w-2/3 bg-gradient-to-r from-emerald-500 to-green-500 text-white font-bold text-base md:text-lg py-3.5 rounded-2xl shadow-lg shadow-emerald-500/40 hover:shadow-emerald-500/60 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+              >
+                <svg
+                  class="w-5 h-5 md:w-6 md:h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2.5"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+                Bayar Lunas
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </main>
 
     <script>
-      // API URL DARI GOOGLE SHEETS
       const API_URL =
         "https://script.google.com/macros/s/AKfycbwv8oETI4cDFYp4f2MHQWvMuTKs5ZHpYYqC6EcNavfy4AsM-2ZIIXtvo7iWmc25JfoY/exec";
 
@@ -345,6 +384,13 @@
         filterBarang();
       }
 
+      // FUNGSI ANTI-LAG (DEBOUNCE SEARCH)
+      let searchTimeout;
+      function debounceSearch() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(filterBarang, 250); // Nunggu 0.25 detik sebelum merender
+      }
+
       function filterBarang() {
         const keyword = document
           .getElementById("searchInput")
@@ -406,11 +452,12 @@
         document.getElementById("badgeCart").innerText = `${totalItems} Barang`;
       }
 
-      async function prosesPembayaran() {
+      // PEMBAYARAN LUNAS
+      function prosesPembayaran() {
         if (cart.length === 0) return alert("Pilih barang dulu!");
         const btn = document.getElementById("btnBayar");
-        btn.innerHTML =
-          '<svg class="w-5 h-5 md:w-6 md:h-6 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> Memproses...';
+        const teksAwal = btn.innerHTML;
+        btn.innerHTML = "Memproses...";
         btn.classList.add("opacity-70", "pointer-events-none");
 
         let totalTransaksi = 0;
@@ -424,10 +471,6 @@
           if (dbItem) dbItem.stok -= c.qty;
         });
 
-        localStorage.setItem(
-          "uang_masuk",
-          parseInt(localStorage.getItem("uang_masuk") || 0) + totalTransaksi,
-        );
         localStorage.setItem("db_warung", JSON.stringify(databaseBarang));
 
         let riwayat = JSON.parse(localStorage.getItem("riwayat_warung")) || [];
@@ -446,15 +489,75 @@
         cart = [];
         renderKeranjang();
         filterBarang();
-        await simpanKeCloud();
+        simpanKeCloud();
 
-        btn.innerHTML =
-          '<svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg> Sukses!';
+        btn.innerHTML = "✅ Sukses!";
+        btn.classList.add("bg-green-600");
         setTimeout(() => {
-          btn.innerHTML =
-            '<svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Simpan Transaksi';
-          btn.classList.remove("opacity-70", "pointer-events-none");
-        }, 2000);
+          btn.innerHTML = teksAwal;
+          btn.classList.remove(
+            "opacity-70",
+            "pointer-events-none",
+            "bg-green-600",
+          );
+        }, 1500);
+      }
+
+      // CATAT KASBON (NGUTANG)
+      function prosesKasbon() {
+        if (cart.length === 0) return alert("Pilih barang dulu!");
+
+        let namaNgutang = prompt("Atas nama siapa kasbon ini?");
+        if (!namaNgutang || namaNgutang.trim() === "") return; // Batal kalau nama kosong
+
+        const btn = document.getElementById("btnKasbon");
+        const teksAwal = btn.innerHTML;
+        btn.innerHTML = "Memproses...";
+        btn.classList.add("opacity-70", "pointer-events-none");
+
+        let totalTransaksi = 0;
+        let detailItems = [];
+        cart.forEach((c) => {
+          totalTransaksi += c.harga * c.qty;
+          detailItems.push(`${c.nama} (${c.qty}x)`);
+          let dbItem = databaseBarang.find(
+            (b) => parseInt(b.id) === parseInt(c.id),
+          );
+          if (dbItem) dbItem.stok -= c.qty;
+        });
+
+        // Simpan stok yang berkurang
+        localStorage.setItem("db_warung", JSON.stringify(databaseBarang));
+
+        // Catat sebagai Tipe 'Hutang' agar uang tidak bertambah di Laci
+        let riwayat = JSON.parse(localStorage.getItem("riwayat_warung")) || [];
+        riwayat.unshift({
+          id: Date.now(),
+          waktu: new Date().toLocaleString("id-ID", {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+          tipe: "Hutang",
+          keterangan: `Kasbon: ${namaNgutang} - ${detailItems.join(", ")}`,
+          nominal: totalTransaksi,
+        });
+        localStorage.setItem("riwayat_warung", JSON.stringify(riwayat));
+
+        cart = [];
+        renderKeranjang();
+        filterBarang();
+        simpanKeCloud();
+
+        btn.innerHTML = "✅ Sukses!";
+        btn.classList.add("bg-amber-300");
+        setTimeout(() => {
+          btn.innerHTML = teksAwal;
+          btn.classList.remove(
+            "opacity-70",
+            "pointer-events-none",
+            "bg-amber-300",
+          );
+        }, 1500);
       }
 
       ambilDataDariCloud();
