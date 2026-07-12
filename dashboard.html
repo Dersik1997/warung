@@ -242,7 +242,7 @@
         <!-- HALAMAN 1: KEUANGAN & RIWAYAT -->
         <section id="view-keuangan" class="block space-y-6 max-w-3xl mx-auto">
           <h2 class="text-2xl font-extrabold text-slate-800 mb-2">
-            Keuangan Hari Ini
+            Keuangan Warung
           </h2>
 
           <div
@@ -254,7 +254,7 @@
               <p
                 class="text-emerald-50 text-sm font-bold uppercase tracking-wider mb-1 opacity-90"
               >
-                Sisa Uang di Laci
+                Sisa Uang di Laci (Hari Ini)
               </p>
               <p
                 id="txtLaci"
@@ -271,7 +271,7 @@
                 <p
                   class="text-[10px] md:text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1"
                 >
-                  Pemasukan
+                  Pemasukan Hari Ini
                 </p>
                 <p
                   id="txtMasuk"
@@ -286,7 +286,7 @@
                 <p
                   class="text-[10px] md:text-xs font-bold text-red-600 uppercase tracking-wider mb-1"
                 >
-                  Pengeluaran
+                  Pengeluaran Hari Ini
                 </p>
                 <p
                   id="txtKeluar"
@@ -315,7 +315,7 @@
             <div class="flex flex-col sm:flex-row gap-3">
               <button
                 onclick="catatPengeluaran()"
-                class="flex-1 flex items-center justify-center gap-2 bg-white border-2 border-slate-200 text-slate-600 font-bold py-3.5 rounded-2xl hover:bg-slate-50 transition-all text-sm md:text-base"
+                class="flex-1 flex items-center justify-center gap-2 bg-white border-2 border-slate-200 text-slate-600 font-bold py-3.5 rounded-2xl hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-600 transition-all text-sm md:text-base"
               >
                 <svg
                   class="w-5 h-5 shrink-0 text-red-400"
@@ -332,7 +332,6 @@
                 </svg>
                 Catat Pengeluaran
               </button>
-              <!-- TOMBOL PELUNASAN BARU -->
               <button
                 onclick="catatPelunasan()"
                 class="flex-1 flex items-center justify-center gap-2 bg-blue-50 border border-blue-200 text-blue-600 font-bold py-3.5 rounded-2xl hover:bg-blue-100 transition-all text-sm md:text-base"
@@ -359,6 +358,40 @@
                 Tutup Buku
               </button>
             </div>
+
+            <!-- PANEL AKUMULASI KESELURUHAN (BARU) -->
+            <div class="mt-6 pt-6 border-t border-dashed border-slate-200">
+              <div
+                class="bg-slate-800 p-5 md:p-6 rounded-[1.5rem] flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-lg shadow-slate-800/30"
+              >
+                <div>
+                  <p
+                    class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1"
+                  >
+                    Total Omset (Sejak Awal)
+                  </p>
+                  <p
+                    id="txtMasukSemua"
+                    class="font-black text-emerald-400 text-xl md:text-2xl"
+                  >
+                    Rp 0
+                  </p>
+                </div>
+                <div class="md:text-right">
+                  <p
+                    class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1"
+                  >
+                    Keuntungan Bersih (Sejak Awal)
+                  </p>
+                  <p
+                    id="txtBersihSemua"
+                    class="font-black text-blue-400 text-xl md:text-2xl"
+                  >
+                    Rp 0
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div
@@ -383,13 +416,20 @@
                 </svg>
               </div>
               <h3 class="font-extrabold text-lg text-slate-800">
-                Riwayat Transaksi
+                Riwayat Hari Ini
               </h3>
             </div>
             <div
               id="riwayatList"
-              class="space-y-4 max-h-[40vh] overflow-y-auto pr-1"
+              class="space-y-4 max-h-[40vh] overflow-y-auto pr-1 mb-4"
             ></div>
+
+            <button
+              onclick="bukaArsip()"
+              class="w-full bg-slate-100 text-slate-600 font-bold py-3 rounded-2xl hover:bg-slate-200 transition-all text-sm border border-slate-200 border-dashed"
+            >
+              Lihat Semua Riwayat (Arsip Lama)
+            </button>
           </div>
         </section>
 
@@ -472,7 +512,6 @@
             </button>
           </div>
 
-          <!-- List Stok & Search Admin (DIPERBAIKI DEBOUNCE) -->
           <div
             class="bg-white p-4 md:p-6 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-100 h-full"
           >
@@ -639,11 +678,64 @@
       </div>
     </div>
 
+    <!-- MODAL SEMUA RIWAYAT (ARSIP) -->
+    <div
+      id="modalArsip"
+      class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4 transition-all duration-300"
+    >
+      <div
+        class="bg-white rounded-[2rem] p-6 w-full max-w-lg shadow-2xl animate-modal-in border border-slate-100 relative h-[80vh] flex flex-col"
+      >
+        <div
+          class="flex justify-between items-center mb-5 border-b border-slate-100 pb-4"
+        >
+          <h3
+            class="font-extrabold text-xl text-slate-800 flex items-center gap-2"
+          >
+            <svg
+              class="w-6 h-6 text-slate-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2.5"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+            Semua Riwayat
+          </h3>
+          <button
+            onclick="tutupArsip()"
+            class="w-8 h-8 flex items-center justify-center bg-red-50 text-red-500 rounded-xl font-bold hover:bg-red-500 hover:text-white transition-colors"
+          >
+            X
+          </button>
+        </div>
+        <div
+          id="arsipFullList"
+          class="flex-1 overflow-y-auto space-y-4 pr-1"
+        ></div>
+      </div>
+    </div>
+
     <script>
       const API_URL =
         "https://script.google.com/macros/s/AKfycbwv8oETI4cDFYp4f2MHQWvMuTKs5ZHpYYqC6EcNavfy4AsM-2ZIIXtvo7iWmc25JfoY/exec";
       const formatRupiah = (angka) => "Rp " + angka.toLocaleString("id-ID");
       let databaseBarang = JSON.parse(localStorage.getItem("db_warung")) || [];
+
+      const getWaktu = () =>
+        new Date()
+          .toLocaleString("id-ID", {
+            day: "2-digit",
+            month: "short",
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+          .replace(/\./g, ":");
 
       function toggleSidebar() {
         document
@@ -657,7 +749,6 @@
         document.getElementById("view-stok").classList.add("hidden");
         document.getElementById(viewId).classList.remove("hidden");
         document.getElementById(viewId).classList.add("block");
-
         document.querySelectorAll(".menu-btn").forEach((btn) => {
           btn.classList.remove(
             "bg-emerald-500",
@@ -690,7 +781,6 @@
               "riwayat_warung",
               JSON.stringify(data.riwayat),
             );
-
           updateStatusUI(
             '<svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>',
             '<span class="hidden sm:inline">Sinkron</span>',
@@ -744,31 +834,71 @@
         });
       }
 
-      // ==== LOGIKA KEUANGAN (TERMASUK PELUNASAN KASBON) ====
+      // ==== LOGIKA BUKU BESAR & AKUMULASI (SEMPURNA) ====
       function muatKeuangan() {
-        let riwayat = JSON.parse(localStorage.getItem("riwayat_warung")) || [];
-        let masuk = 0,
-          keluar = 0,
-          hutang = 0;
+        let riwayatLengkap =
+          JSON.parse(localStorage.getItem("riwayat_warung")) || [];
 
-        riwayat.forEach((r) => {
-          if (r.tipe === "Masuk") masuk += r.nominal;
-          else if (r.tipe === "Keluar") keluar += r.nominal;
-          else if (r.tipe === "Hutang") hutang += r.nominal;
-          else if (r.tipe === "Pelunasan") {
-            hutang -= r.nominal; // Mengurangi total kasbon
-            masuk += r.nominal; // Uang pelunasan masuk ke Laci
+        let masukHariIni = 0,
+          keluarHariIni = 0,
+          hutangHariIni = 0;
+        let masukSemua = 0,
+          keluarSemua = 0,
+          hutangSemua = 0;
+
+        let riwayatHariIni = [];
+        let batasHariIni = false;
+
+        for (let i = 0; i < riwayatLengkap.length; i++) {
+          let r = riwayatLengkap[i];
+
+          if (r.tipe === "Tutup Buku") {
+            batasHariIni = true;
+            continue;
           }
-        });
 
-        document.getElementById("txtMasuk").innerText = formatRupiah(masuk);
-        document.getElementById("txtKeluar").innerText = formatRupiah(keluar);
+          // Hitung Untuk Semua Waktu (Keseluruhan)
+          if (r.tipe === "Masuk") masukSemua += r.nominal;
+          else if (r.tipe === "Keluar") keluarSemua += r.nominal;
+          else if (r.tipe === "Hutang") hutangSemua += r.nominal;
+          else if (r.tipe === "Pelunasan") {
+            hutangSemua -= r.nominal;
+            masukSemua += r.nominal;
+          }
+
+          // Hitung Untuk Hari Ini (Sebelum batas Tutup Buku)
+          if (!batasHariIni) {
+            riwayatHariIni.push(r);
+            if (r.tipe === "Masuk") masukHariIni += r.nominal;
+            else if (r.tipe === "Keluar") keluarHariIni += r.nominal;
+            else if (r.tipe === "Hutang") hutangHariIni += r.nominal;
+            else if (r.tipe === "Pelunasan") {
+              hutangHariIni -= r.nominal;
+              masukHariIni += r.nominal;
+            }
+          }
+        }
+
+        // Update UI Hari Ini
+        document.getElementById("txtMasuk").innerText =
+          formatRupiah(masukHariIni);
+        document.getElementById("txtKeluar").innerText =
+          formatRupiah(keluarHariIni);
         document.getElementById("txtLaci").innerText = formatRupiah(
-          masuk - keluar,
+          masukHariIni - keluarHariIni,
         );
-        document.getElementById("txtHutang").innerText = formatRupiah(hutang);
+        document.getElementById("txtHutang").innerText = formatRupiah(
+          Math.max(0, hutangSemua),
+        ); // Hutang selalu tampil total yg belum lunas
 
-        renderRiwayat(riwayat);
+        // Update UI Keseluruhan
+        document.getElementById("txtMasukSemua").innerText =
+          formatRupiah(masukSemua);
+        document.getElementById("txtBersihSemua").innerText = formatRupiah(
+          masukSemua - keluarSemua,
+        );
+
+        renderRiwayat(riwayatHariIni);
       }
 
       function catatPengeluaran() {
@@ -777,29 +907,24 @@
         let nom = parseInt(nomInput.replace(/[^0-9]/g, ""));
         if (isNaN(nom) || nom <= 0)
           return alert("❌ Nominal harus angka valid!");
-
         let ket = prompt("Uang keluar untuk apa?");
         if (!ket) return;
 
         let rw = JSON.parse(localStorage.getItem("riwayat_warung")) || [];
         rw.unshift({
           id: Date.now(),
-          waktu: new Date().toLocaleString("id-ID", {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
+          waktu: getWaktu(),
           tipe: "Keluar",
           keterangan: ket,
           nominal: nom,
         });
         localStorage.setItem("riwayat_warung", JSON.stringify(rw));
-
         muatKeuangan();
         simpanKeCloud();
       }
 
       function catatPelunasan() {
-        let nm = prompt("Nama pelanggan yang bayar kasbon/utang:");
+        let nm = prompt("Nama pelanggan yang bayar kasbon:");
         if (!nm) return;
         let nomInput = prompt(
           `Berapa nominal yang dibayar ${nm}? (Cth: 20000)`,
@@ -812,41 +937,37 @@
         let rw = JSON.parse(localStorage.getItem("riwayat_warung")) || [];
         rw.unshift({
           id: Date.now(),
-          waktu: new Date().toLocaleString("id-ID", {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
+          waktu: getWaktu(),
           tipe: "Pelunasan",
-          keterangan: `Pelunasan: ${nm}`,
+          keterangan: `Lunas: ${nm}`,
           nominal: nom,
         });
         localStorage.setItem("riwayat_warung", JSON.stringify(rw));
-
         muatKeuangan();
         simpanKeCloud();
       }
 
       function hapusRiwayatItem(id) {
-        if (
-          confirm(
-            "Yakin ingin menghapus catatan transaksi ini? Uang di laci akan dihitung ulang.",
-          )
-        ) {
+        if (confirm("Yakin ingin MENGHAPUS catatan transaksi ini?")) {
           let rw = JSON.parse(localStorage.getItem("riwayat_warung")) || [];
           rw = rw.filter((r) => r.id !== id);
           localStorage.setItem("riwayat_warung", JSON.stringify(rw));
           muatKeuangan();
           simpanKeCloud();
+          if (
+            !document.getElementById("modalArsip").classList.contains("hidden")
+          )
+            renderArsipLengkap();
         }
       }
 
-      function renderRiwayat(riwayatArray) {
+      function renderRiwayat(riwayatHariIniArray) {
         const container = document.getElementById("riwayatList");
-        if (riwayatArray.length === 0)
-          return (container.innerHTML = `<p class="text-center text-slate-400 text-sm py-4">Belum ada transaksi</p>`);
+        if (riwayatHariIniArray.length === 0)
+          return (container.innerHTML = `<p class="text-center text-slate-400 text-sm py-4">Belum ada transaksi hari ini</p>`);
 
         container.innerHTML = "";
-        riwayatArray.forEach((log) => {
+        riwayatHariIniArray.forEach((log) => {
           let isMasuk = log.tipe === "Masuk" || log.tipe === "Pelunasan";
           let colorClass = isMasuk
             ? "text-emerald-500"
@@ -863,7 +984,7 @@
                         </div>
                         <div class="flex items-center gap-3">
                             <span class="font-black text-xs md:text-sm ${colorClass}">${symbol}${formatRupiah(log.nominal)}</span>
-                            <button onclick="hapusRiwayatItem(${log.id})" class="text-slate-300 hover:text-red-500 hover:bg-red-50 p-1 rounded transition-colors" title="Hapus transaksi ini">
+                            <button onclick="hapusRiwayatItem(${log.id})" class="text-slate-300 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-lg transition-colors" title="Hapus transaksi ini">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
                         </div>
@@ -871,11 +992,80 @@
         });
       }
 
+      // ==== FITUR ARSIP & TUTUP BUKU ====
+      async function resetKas() {
+        if (
+          confirm(
+            "Tutup Buku akan mengarsipkan riwayat hari ini dan me-reset Uang Laci jadi Rp 0 untuk persiapan besok.\n\nLanjutkan?",
+          )
+        ) {
+          let rw = JSON.parse(localStorage.getItem("riwayat_warung")) || [];
+          rw.unshift({
+            id: Date.now(),
+            waktu: getWaktu(),
+            tipe: "Tutup Buku",
+            keterangan: "--- TUTUP BUKU HARIAN ---",
+            nominal: 0,
+          });
+          localStorage.setItem("riwayat_warung", JSON.stringify(rw));
+          muatKeuangan();
+          simpanKeCloud();
+        }
+      }
+
+      function bukaArsip() {
+        renderArsipLengkap();
+        document.getElementById("modalArsip").classList.remove("hidden");
+      }
+      function tutupArsip() {
+        document.getElementById("modalArsip").classList.add("hidden");
+      }
+
+      function renderArsipLengkap() {
+        const container = document.getElementById("arsipFullList");
+        let rw = JSON.parse(localStorage.getItem("riwayat_warung")) || [];
+        if (rw.length === 0)
+          return (container.innerHTML = `<p class="text-center text-slate-400 text-sm py-4">Belum ada sejarah transaksi</p>`);
+
+        container.innerHTML = "";
+        rw.forEach((log) => {
+          if (log.tipe === "Tutup Buku") {
+            container.innerHTML += `
+                        <div class="flex items-center justify-center gap-4 py-4 my-2 opacity-70">
+                            <div class="h-px bg-slate-200 flex-1"></div>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 px-3 py-1 rounded-full">${log.waktu} - Tutup Buku</span>
+                            <div class="h-px bg-slate-200 flex-1"></div>
+                        </div>`;
+          } else {
+            let isMasuk = log.tipe === "Masuk" || log.tipe === "Pelunasan";
+            let colorClass = isMasuk
+              ? "text-emerald-500"
+              : log.tipe === "Keluar"
+                ? "text-red-500"
+                : "text-amber-500";
+            let symbol = isMasuk ? "+" : log.tipe === "Keluar" ? "-" : "📒 ";
+            container.innerHTML += `
+                        <div class="flex justify-between items-start bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                            <div class="pr-2 flex-1">
+                                <p class="text-[10px] font-bold text-slate-400">${log.waktu}</p>
+                                <p class="text-sm font-bold text-slate-700">${log.keterangan}</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="font-black text-sm ${colorClass}">${symbol}${formatRupiah(log.nominal)}</span>
+                                <button onclick="hapusRiwayatItem(${log.id})" class="text-slate-300 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-lg transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                            </div>
+                        </div>`;
+          }
+        });
+      }
+
       // ==== FITUR SEARCH ADMIN DENGAN DEBOUNCE ====
       let adminSearchTimeout;
       function debounceAdminSearch() {
         clearTimeout(adminSearchTimeout);
-        adminSearchTimeout = setTimeout(filterAdmin, 250); // Mencegah lag di Dashboard
+        adminSearchTimeout = setTimeout(filterAdmin, 250);
       }
 
       function filterAdmin() {
@@ -1023,18 +1213,6 @@
           );
           localStorage.setItem("db_warung", JSON.stringify(databaseBarang));
           filterAdmin();
-          simpanKeCloud();
-        }
-      }
-
-      async function resetKas() {
-        if (
-          confirm(
-            "Tutup buku akan MERESET semua catatan riwayat hari ini ke 0.\nPastikan utang yang nyebrang hari sudah dicatat terpisah.\nLanjut tutup buku?",
-          )
-        ) {
-          localStorage.setItem("riwayat_warung", "[]");
-          muatKeuangan();
           simpanKeCloud();
         }
       }
