@@ -1,982 +1,383 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Teh Eha</title>
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#10b981">
+    <link rel="apple-touch-icon" href="icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-      body {
-        font-family: "Poppins", sans-serif;
-        overflow: hidden;
-      }
-      ::-webkit-scrollbar {
-        width: 4px;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #cbd5e1;
-        border-radius: 10px;
-      }
-
-      .laci-card {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        position: relative;
-        overflow: hidden;
-      }
-      .laci-card::before {
-        content: "";
-        position: absolute;
-        top: -50%;
-        right: -20%;
-        width: 200px;
-        height: 200px;
-        background: rgba(255, 255, 255, 0.15);
-        border-radius: 50%;
-        filter: blur(20px);
-      }
-      .animate-modal-in {
-        animation: modalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      }
-      @keyframes modalIn {
-        from {
-          opacity: 0;
-          transform: scale(0.95) translateY(10px);
-        }
-        to {
-          opacity: 1;
-          transform: scale(1) translateY(0);
-        }
-      }
+        body { font-family: 'Poppins', sans-serif; overflow: hidden; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        
+        .laci-card { background: linear-gradient(135deg, #10b981 0%, #059669 100%); position: relative; overflow: hidden; }
+        .laci-card::before { content: ''; position: absolute; top: -50%; right: -20%; width: 200px; height: 200px; background: rgba(255,255,255,0.15); border-radius: 50%; filter: blur(20px); }
+        .animate-modal-in { animation: modalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes modalIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
     </style>
-    <script>
-      if (sessionStorage.getItem("isLoggedIn") !== "true")
-        window.location.href = "login.html";
-    </script>
-  </head>
-  <body class="bg-[#f8fafc] text-slate-800 antialiased flex h-screen w-full">
-    <aside
-      id="sidebar"
-      class="fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-200 shadow-2xl transform -translate-x-full lg:translate-x-0 transition-transform duration-300 lg:static lg:shadow-none flex flex-col"
-    >
-      <div class="p-6 flex items-center gap-3 border-b border-slate-100">
-        <div
-          class="w-10 h-10 bg-gradient-to-tr from-emerald-500 to-green-400 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/30 shrink-0"
-        >
-          <span class="text-white font-bold text-xl leading-none mt-0.5"
-            >E</span
-          >
+    <script>if(sessionStorage.getItem('isLoggedIn') !== 'true') window.location.href = 'login.html';</script>
+</head>
+<body class="bg-[#f8fafc] text-slate-800 antialiased flex h-screen w-full">
+
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-200 shadow-2xl transform -translate-x-full lg:translate-x-0 transition-transform duration-300 lg:static lg:shadow-none flex flex-col">
+        <div class="p-6 flex items-center gap-3 border-b border-slate-100">
+            <div class="w-10 h-10 bg-gradient-to-tr from-emerald-500 to-green-400 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/30 shrink-0">
+                <span class="text-white font-bold text-xl leading-none mt-0.5">E</span>
+            </div>
+            <h1 class="text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-green-500 tracking-tight leading-tight">Buku<br>Warung.</h1>
         </div>
-        <h1
-          class="text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-green-500 tracking-tight leading-tight"
-        >
-          Buku<br />Warung.
-        </h1>
-      </div>
 
-      <div class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-        <p
-          class="px-3 text-xs font-bold text-slate-400 uppercase tracking-wider mb-3"
-        >
-          Menu Utama
-        </p>
-        <button
-          onclick="switchMenu('view-keuangan', this)"
-          class="menu-btn w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-emerald-500 text-white font-bold transition-all text-left shadow-lg shadow-emerald-500/30"
-        >
-          <svg
-            class="w-5 h-5 shrink-0"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2.5"
-              d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            ></path>
-          </svg>
-          <span class="text-sm">Keuangan & Riwayat</span>
-        </button>
-        <button
-          onclick="switchMenu('view-stok', this)"
-          class="menu-btn w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-500 hover:bg-emerald-50 hover:text-emerald-600 font-bold transition-all text-left"
-        >
-          <svg
-            class="w-5 h-5 shrink-0"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2.5"
-              d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-            ></path>
-          </svg>
-          <span class="text-sm">Kelola Data Barang</span>
-        </button>
-      </div>
+        <div class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+            <p class="px-3 text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Menu Utama</p>
+            <button onclick="switchMenu('view-keuangan', this)" class="menu-btn w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-emerald-500 text-white font-bold transition-all text-left shadow-lg shadow-emerald-500/30">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span class="text-sm">Keuangan & Riwayat</span>
+            </button>
+            <button onclick="switchMenu('view-stok', this)" class="menu-btn w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-slate-500 hover:bg-emerald-50 hover:text-emerald-600 font-bold transition-all text-left">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                <span class="text-sm">Kelola Data Barang</span>
+            </button>
+        </div>
 
-      <div class="p-4 border-t border-slate-100 space-y-2">
-        <a
-          href="index.html"
-          class="w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-2xl bg-slate-100 text-slate-600 font-bold hover:bg-slate-200 transition-all text-sm"
-        >
-          <svg
-            class="w-4 h-4 shrink-0"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2.5"
-              d="M10 19l-7-7m0 0l7-7m-7 7h18"
-            ></path>
-          </svg>
-          Ke Mesin Kasir
-        </a>
-        <button
-          onclick="logout()"
-          class="w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-2xl bg-white text-red-500 font-bold hover:bg-red-50 transition-all text-sm border border-slate-200"
-        >
-          <svg
-            class="w-4 h-4 shrink-0"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2.5"
-              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-            ></path>
-          </svg>
-          Keluar (Logout)
-        </button>
-      </div>
+        <div class="p-4 border-t border-slate-100 space-y-2">
+            <a href="index.html" class="w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-2xl bg-slate-100 text-slate-600 font-bold hover:bg-slate-200 transition-all text-sm">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg> Ke Mesin Kasir
+            </a>
+            <button onclick="logout()" class="w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-2xl bg-white text-red-500 font-bold hover:bg-red-50 transition-all text-sm border border-slate-200">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg> Keluar (Logout)
+            </button>
+        </div>
     </aside>
 
-    <div
-      id="sidebarOverlay"
-      onclick="toggleSidebar()"
-      class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 lg:hidden transition-opacity"
-    ></div>
+    <div id="sidebarOverlay" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 lg:hidden transition-opacity"></div>
 
     <div class="flex-1 flex flex-col h-screen overflow-hidden relative">
-      <header
-        class="lg:hidden bg-white/80 backdrop-blur-md border-b border-slate-200/60 p-4 sticky top-0 z-30 flex justify-between items-center shadow-sm"
-      >
-        <button
-          onclick="toggleSidebar()"
-          class="p-2 -ml-2 bg-emerald-50 rounded-xl text-emerald-600 hover:bg-emerald-100 transition-colors"
-        >
-          <svg
-            class="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2.5"
-              d="M4 6h16M4 12h16M4 18h7"
-            ></path>
-          </svg>
-        </button>
-        <div
-          id="syncStatus"
-          class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 shadow-inner"
-        >
-          <svg
-            class="w-3.5 h-3.5 animate-spin"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2.5"
-              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-            ></path>
-          </svg>
-          Sinkron...
-        </div>
-      </header>
-
-      <div
-        class="hidden lg:flex justify-end p-4 absolute top-0 right-0 z-30 pointer-events-none"
-      >
-        <div
-          id="syncStatusDesktop"
-          class="bg-white border border-slate-200 text-slate-600 px-4 py-2 rounded-full text-sm font-bold flex items-center gap-2 shadow-sm pointer-events-auto"
-        >
-          <svg
-            class="w-4 h-4 animate-spin text-amber-500"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2.5"
-              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-            ></path>
-          </svg>
-          Sinkronisasi Cloud...
-        </div>
-      </div>
-
-      <main class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-10 pb-24">
-        <!-- HALAMAN 1: KEUANGAN & RIWAYAT -->
-        <section id="view-keuangan" class="block space-y-6 max-w-3xl mx-auto">
-          <h2 class="text-2xl font-extrabold text-slate-800 mb-2">
-            Keuangan Warung
-          </h2>
-
-          <div
-            class="bg-white p-6 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-100"
-          >
-            <div
-              class="laci-card p-6 md:p-8 rounded-3xl shadow-lg shadow-emerald-500/30 text-white mb-6"
-            >
-              <p
-                class="text-emerald-50 text-sm font-bold uppercase tracking-wider mb-1 opacity-90"
-              >
-                Sisa Uang di Laci (Hari Ini)
-              </p>
-              <p
-                id="txtLaci"
-                class="font-black text-4xl md:text-5xl tracking-tight relative z-10"
-              >
-                Rp 0
-              </p>
-            </div>
-
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-              <div
-                class="bg-emerald-50 p-4 md:p-5 rounded-2xl border border-emerald-100"
-              >
-                <p
-                  class="text-[10px] md:text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1"
-                >
-                  Pemasukan Hari Ini
-                </p>
-                <p
-                  id="txtMasuk"
-                  class="font-black text-emerald-700 text-lg md:text-xl"
-                >
-                  Rp 0
-                </p>
-              </div>
-              <div
-                class="bg-red-50 p-4 md:p-5 rounded-2xl border border-red-100"
-              >
-                <p
-                  class="text-[10px] md:text-xs font-bold text-red-600 uppercase tracking-wider mb-1"
-                >
-                  Pengeluaran Hari Ini
-                </p>
-                <p
-                  id="txtKeluar"
-                  class="font-black text-red-700 text-lg md:text-xl"
-                >
-                  Rp 0
-                </p>
-              </div>
-              <div
-                class="col-span-2 md:col-span-1 bg-amber-50 p-4 md:p-5 rounded-2xl border border-amber-100"
-              >
-                <p
-                  class="text-[10px] md:text-xs font-bold text-amber-600 uppercase tracking-wider mb-1"
-                >
-                  Total Kasbon
-                </p>
-                <p
-                  id="txtHutang"
-                  class="font-black text-amber-700 text-lg md:text-xl"
-                >
-                  Rp 0
-                </p>
-              </div>
-            </div>
-
-            <div class="flex flex-col sm:flex-row gap-3">
-              <button
-                onclick="catatPengeluaran()"
-                class="flex-1 flex items-center justify-center gap-2 bg-white border-2 border-slate-200 text-slate-600 font-bold py-3.5 rounded-2xl hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-600 transition-all text-sm md:text-base"
-              >
-                <svg
-                  class="w-5 h-5 shrink-0 text-red-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2.5"
-                    d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
-                  ></path>
-                </svg>
-                Catat Pengeluaran
-              </button>
-              <button
-                onclick="catatPelunasan()"
-                class="flex-1 flex items-center justify-center gap-2 bg-blue-50 border border-blue-200 text-blue-600 font-bold py-3.5 rounded-2xl hover:bg-blue-100 transition-all text-sm md:text-base"
-              >
-                <svg
-                  class="w-5 h-5 shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2.5"
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  ></path>
-                </svg>
-                Lunasi Kasbon
-              </button>
-              <button
-                onclick="resetKas()"
-                class="sm:w-1/4 text-red-500 border border-slate-200 hover:border-red-200 font-bold py-3 rounded-2xl text-sm hover:bg-red-50 transition-all"
-              >
-                Tutup Buku
-              </button>
-            </div>
-
-            <!-- PANEL AKUMULASI KESELURUHAN (BARU) -->
-            <div class="mt-6 pt-6 border-t border-dashed border-slate-200">
-              <div
-                class="bg-slate-800 p-5 md:p-6 rounded-[1.5rem] flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-lg shadow-slate-800/30"
-              >
-                <div>
-                  <p
-                    class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1"
-                  >
-                    Total Omset (Sejak Awal)
-                  </p>
-                  <p
-                    id="txtMasukSemua"
-                    class="font-black text-emerald-400 text-xl md:text-2xl"
-                  >
-                    Rp 0
-                  </p>
-                </div>
-                <div class="md:text-right">
-                  <p
-                    class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1"
-                  >
-                    Keuntungan Bersih (Sejak Awal)
-                  </p>
-                  <p
-                    id="txtBersihSemua"
-                    class="font-black text-blue-400 text-xl md:text-2xl"
-                  >
-                    Rp 0
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div
-            class="bg-white p-6 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-100"
-          >
-            <div class="flex items-center gap-3 mb-5">
-              <div
-                class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30 shrink-0"
-              >
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2.5"
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  ></path>
-                </svg>
-              </div>
-              <h3 class="font-extrabold text-lg text-slate-800">
-                Riwayat Hari Ini
-              </h3>
-            </div>
-            <div
-              id="riwayatList"
-              class="space-y-4 max-h-[40vh] overflow-y-auto pr-1 mb-4"
-            ></div>
-
-            <button
-              onclick="bukaArsip()"
-              class="w-full bg-slate-100 text-slate-600 font-bold py-3 rounded-2xl hover:bg-slate-200 transition-all text-sm border border-slate-200 border-dashed"
-            >
-              Lihat Semua Riwayat (Arsip Lama)
+        <header class="lg:hidden bg-white/80 backdrop-blur-md border-b border-slate-200/60 p-4 sticky top-0 z-30 flex justify-between items-center shadow-sm">
+            <button onclick="toggleSidebar()" class="p-2 -ml-2 bg-emerald-50 rounded-xl text-emerald-600 hover:bg-emerald-100 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h7"></path></svg>
             </button>
-          </div>
-        </section>
-
-        <!-- HALAMAN 2: KELOLA DATA BARANG & STOK -->
-        <section id="view-stok" class="hidden space-y-6 max-w-4xl mx-auto">
-          <h2 class="text-2xl font-extrabold text-slate-800 mb-2">
-            Database Barang
-          </h2>
-
-          <div
-            class="bg-white p-6 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-100 relative overflow-hidden"
-          >
-            <div
-              class="absolute -right-10 -top-10 w-32 h-32 bg-emerald-50 rounded-full blur-3xl opacity-60"
-            ></div>
-
-            <div class="flex items-center gap-3 mb-5 relative z-10">
-              <div
-                class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30 shrink-0"
-              >
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2.5"
-                    d="M12 4v16m8-8H4"
-                  ></path>
-                </svg>
-              </div>
-              <h3 class="font-extrabold text-lg text-slate-800">Barang Baru</h3>
+            <div id="syncStatus" class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 shadow-inner">
+                <svg class="w-3.5 h-3.5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> Sinkron...
             </div>
+        </header>
 
-            <div
-              class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 relative z-10"
-            >
-              <input
-                type="text"
-                id="newNama"
-                placeholder="Nama Barang..."
-                class="px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 outline-none font-medium transition-all"
-              />
-              <select
-                id="newKategori"
-                class="px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 outline-none font-bold text-slate-600 transition-all"
-              >
-                <option value="Sembako">Sembako</option>
-                <option value="Minuman">Minuman</option>
-                <option value="Snack">Snack</option>
-                <option value="Obat">Obat</option>
-                <option value="Kecantikan">Kecantikan</option>
-                <option value="Lainnya">Lainnya</option>
-              </select>
-              <input
-                type="text"
-                inputmode="numeric"
-                id="newHarga"
-                placeholder="Harga Jual (Cth: 15000)"
-                class="px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 outline-none font-medium transition-all"
-              />
-              <input
-                type="text"
-                inputmode="numeric"
-                id="newStok"
-                placeholder="Jumlah Stok Awal"
-                class="px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 outline-none font-bold transition-all"
-              />
+        <div class="hidden lg:flex justify-end p-4 absolute top-0 right-0 z-30 pointer-events-none">
+            <div id="syncStatusDesktop" class="bg-white border border-slate-200 text-slate-600 px-4 py-2 rounded-full text-sm font-bold flex items-center gap-2 shadow-sm pointer-events-auto">
+                <svg class="w-4 h-4 animate-spin text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> Sinkronisasi Cloud...
             </div>
+        </div>
 
-            <button
-              id="btnSimpanBarangBaru"
-              onclick="tambahBarang()"
-              class="relative z-10 w-full bg-gradient-to-r from-emerald-500 to-green-500 text-white font-bold text-base md:text-lg py-4 rounded-2xl shadow-lg shadow-emerald-500/40 hover:shadow-emerald-500/60 active:scale-[0.98] transition-all duration-300"
-            >
-              Simpan ke Sistem
-            </button>
-          </div>
+        <main class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-10 pb-24">
+            
+            <section id="view-keuangan" class="block space-y-6 max-w-3xl mx-auto">
+                <h2 class="text-2xl font-extrabold text-slate-800 mb-2">Keuangan Warung</h2>
+                
+                <div class="bg-white p-6 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-100">
+                    <div class="laci-card p-6 md:p-8 rounded-3xl shadow-lg shadow-emerald-500/30 text-white mb-6">
+                        <p class="text-emerald-50 text-sm font-bold uppercase tracking-wider mb-1 opacity-90">Sisa Uang di Laci (Hari Ini)</p>
+                        <p id="txtLaci" class="font-black text-4xl md:text-5xl tracking-tight relative z-10">Rp 0</p>
+                    </div>
 
-          <div
-            class="bg-white p-4 md:p-6 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-100 h-full"
-          >
-            <div
-              class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5 ml-2"
-            >
-              <div class="flex items-center gap-3">
-                <div
-                  class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30 shrink-0"
-                >
-                  <svg
-                    class="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2.5"
-                      d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                    ></path>
-                  </svg>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-emerald-50 p-4 md:p-5 rounded-2xl border border-emerald-100">
+                            <p class="text-[10px] md:text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1">Pemasukan Hari Ini</p>
+                            <p id="txtMasuk" class="font-black text-emerald-700 text-lg md:text-xl">Rp 0</p>
+                        </div>
+                        <div class="bg-red-50 p-4 md:p-5 rounded-2xl border border-red-100">
+                            <p class="text-[10px] md:text-xs font-bold text-red-600 uppercase tracking-wider mb-1">Pengeluaran Hari Ini</p>
+                            <p id="txtKeluar" class="font-black text-red-700 text-lg md:text-xl">Rp 0</p>
+                        </div>
+                        <div class="col-span-2 md:col-span-1 bg-amber-50 p-4 md:p-5 rounded-2xl border border-amber-100">
+                            <p class="text-[10px] md:text-xs font-bold text-amber-600 uppercase tracking-wider mb-1">Total Kasbon</p>
+                            <p id="txtHutang" class="font-black text-amber-700 text-lg md:text-xl">Rp 0</p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <button onclick="catatPengeluaran()" class="flex-1 flex items-center justify-center gap-2 bg-white border-2 border-slate-200 text-slate-600 font-bold py-3.5 rounded-2xl hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-600 transition-all text-sm md:text-base">
+                            <svg class="w-5 h-5 shrink-0 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg> Catat Pengeluaran
+                        </button>
+                        <button onclick="catatPelunasan()" class="flex-1 flex items-center justify-center gap-2 bg-blue-50 border border-blue-200 text-blue-600 font-bold py-3.5 rounded-2xl hover:bg-blue-100 transition-all text-sm md:text-base">
+                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Lunasi Kasbon
+                        </button>
+                        <button onclick="resetKas()" class="sm:w-1/4 text-red-500 border border-slate-200 hover:border-red-200 font-bold py-3 rounded-2xl text-sm hover:bg-red-50 transition-all">
+                            Tutup Buku
+                        </button>
+                    </div>
+
+                    <div class="mt-6 pt-6 border-t border-dashed border-slate-200">
+                        <div class="bg-slate-800 p-5 md:p-6 rounded-[1.5rem] flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-lg shadow-slate-800/30">
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Omset (Sejak Awal)</p>
+                                <p id="txtMasukSemua" class="font-black text-emerald-400 text-xl md:text-2xl">Rp 0</p>
+                            </div>
+                            <div class="md:text-right">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Keuntungan Bersih (Sejak Awal)</p>
+                                <p id="txtBersihSemua" class="font-black text-blue-400 text-xl md:text-2xl">Rp 0</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <h3 class="font-extrabold text-lg text-slate-800">
-                  Data & Stok
-                </h3>
-              </div>
 
-              <div class="relative w-full md:w-64">
-                <div
-                  class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
-                >
-                  <svg
-                    class="w-4 h-4 text-slate-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2.5"
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    ></path>
-                  </svg>
+                <div class="bg-white p-6 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-100">
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30 shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        </div>
+                        <h3 class="font-extrabold text-lg text-slate-800">Riwayat Hari Ini</h3>
+                    </div>
+                    <div id="riwayatList" class="space-y-4 max-h-[40vh] overflow-y-auto pr-1 mb-4"></div>
+                    
+                    <button onclick="bukaArsip()" class="w-full bg-slate-100 text-slate-600 font-bold py-3 rounded-2xl hover:bg-slate-200 transition-all text-sm border border-slate-200 border-dashed">
+                        Lihat Semua Riwayat (Arsip Lama)
+                    </button>
                 </div>
-                <input
-                  type="text"
-                  id="searchAdmin"
-                  placeholder="Cari barang..."
-                  onkeyup="debounceAdminSearch()"
-                  class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm font-medium"
-                />
-              </div>
-            </div>
-            <div
-              id="stockManagementList"
-              class="grid grid-cols-1 gap-4 max-h-[60vh] overflow-y-auto pr-1"
-            ></div>
-          </div>
-        </section>
-      </main>
+            </section>
+
+            <section id="view-stok" class="hidden space-y-6 max-w-4xl mx-auto">
+                <h2 class="text-2xl font-extrabold text-slate-800 mb-2">Database Barang</h2>
+                
+                <div class="bg-white p-6 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-100 relative overflow-hidden">
+                    <div class="absolute -right-10 -top-10 w-32 h-32 bg-emerald-50 rounded-full blur-3xl opacity-60"></div>
+                    
+                    <div class="flex items-center gap-3 mb-5 relative z-10">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30 shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                        </div>
+                        <h3 class="font-extrabold text-lg text-slate-800">Barang Baru</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 relative z-10">
+                        <input type="text" id="newNama" placeholder="Nama Barang..." class="px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 outline-none font-medium transition-all">
+                        <select id="newKategori" class="px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 outline-none font-bold text-slate-600 transition-all">
+                            <option value="Sembako">Sembako</option><option value="Minuman">Minuman</option><option value="Snack">Snack</option><option value="Obat">Obat</option><option value="Kecantikan">Kecantikan</option><option value="Lainnya">Lainnya</option>
+                        </select>
+                        <input type="text" inputmode="numeric" id="newHarga" placeholder="Harga Jual (Cth: 15000)" class="px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 outline-none font-medium transition-all">
+                        <input type="text" inputmode="numeric" id="newStok" placeholder="Jumlah Stok Awal" class="px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 outline-none font-bold transition-all">
+                    </div>
+                    
+                    <button id="btnSimpanBarangBaru" onclick="tambahBarang()" class="relative z-10 w-full bg-gradient-to-r from-emerald-500 to-green-500 text-white font-bold text-base md:text-lg py-4 rounded-2xl shadow-lg shadow-emerald-500/40 hover:shadow-emerald-500/60 active:scale-[0.98] transition-all duration-300">
+                        Simpan ke Sistem
+                    </button>
+                </div>
+
+                <div class="bg-white p-4 md:p-6 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-100 h-full">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5 ml-2">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30 shrink-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                            </div>
+                            <h3 class="font-extrabold text-lg text-slate-800">Data & Stok</h3>
+                        </div>
+                        
+                        <div class="relative w-full md:w-64">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            </div>
+                            <input type="text" id="searchAdmin" placeholder="Cari barang..." onkeyup="debounceAdminSearch()" class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm font-medium">
+                        </div>
+                    </div>
+                    <div id="stockManagementList" class="grid grid-cols-1 gap-4 max-h-[60vh] overflow-y-auto pr-1"></div>
+                </div>
+            </section>
+        </main>
     </div>
 
     <!-- MODAL EDIT BARANG -->
-    <div
-      id="modalEdit"
-      class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4 transition-all duration-300"
-    >
-      <div
-        class="bg-white rounded-[2rem] p-6 md:p-8 w-full max-w-sm shadow-2xl animate-modal-in border border-slate-100 relative overflow-hidden"
-      >
-        <h3
-          class="font-extrabold text-xl text-slate-800 mb-6 flex items-center gap-3"
-        >
-          <div
-            class="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center text-white shadow-md shrink-0"
-          >
-            <svg
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2.5"
-                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-              ></path>
-            </svg>
-          </div>
-          Edit Data
-        </h3>
-        <input type="hidden" id="editId" />
-        <div class="space-y-4 mb-8">
-          <div>
-            <label class="text-xs font-bold text-slate-400 uppercase ml-1"
-              >Nama</label
-            >
-            <input
-              type="text"
-              id="editNama"
-              class="w-full mt-1.5 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none font-medium"
-            />
-          </div>
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="text-xs font-bold text-slate-400 uppercase ml-1"
-                >Kategori</label
-              >
-              <select
-                id="editKategori"
-                class="w-full mt-1.5 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none font-bold text-slate-600"
-              >
-                <option value="Sembako">Sembako</option>
-                <option value="Minuman">Minuman</option>
-                <option value="Snack">Snack</option>
-                <option value="Obat">Obat</option>
-                <option value="Kecantikan">Kecantikan</option>
-                <option value="Lainnya">Lainnya</option>
-              </select>
+    <div id="modalEdit" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4 transition-all duration-300">
+        <div class="bg-white rounded-[2rem] p-6 md:p-8 w-full max-w-sm shadow-2xl animate-modal-in border border-slate-100 relative overflow-hidden">
+            <h3 class="font-extrabold text-xl text-slate-800 mb-6 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center text-white shadow-md shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                </div> Edit Data
+            </h3>
+            <input type="hidden" id="editId">
+            <div class="space-y-4 mb-8">
+                <div>
+                    <label class="text-xs font-bold text-slate-400 uppercase ml-1">Nama</label>
+                    <input type="text" id="editNama" class="w-full mt-1.5 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none font-medium">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-bold text-slate-400 uppercase ml-1">Kategori</label>
+                        <select id="editKategori" class="w-full mt-1.5 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none font-bold text-slate-600">
+                            <option value="Sembako">Sembako</option><option value="Minuman">Minuman</option><option value="Snack">Snack</option><option value="Obat">Obat</option><option value="Kecantikan">Kecantikan</option><option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-400 uppercase ml-1">Stok</label>
+                        <input type="text" inputmode="numeric" id="editStok" class="w-full mt-1.5 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none font-bold text-center">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-400 uppercase ml-1">Harga Jual</label>
+                    <input type="text" inputmode="numeric" id="editHarga" class="w-full mt-1.5 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none font-bold text-blue-600 text-lg">
+                </div>
             </div>
-            <div>
-              <label class="text-xs font-bold text-slate-400 uppercase ml-1"
-                >Stok</label
-              >
-              <input
-                type="text"
-                inputmode="numeric"
-                id="editStok"
-                class="w-full mt-1.5 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none font-bold text-center"
-              />
+            <div class="flex gap-3">
+                <button onclick="tutupModal()" class="w-1/3 bg-slate-100 text-slate-500 font-bold py-3.5 rounded-2xl hover:bg-slate-200">Batal</button>
+                <button id="btnSimpanEdit" onclick="simpanEdit()" class="w-2/3 bg-blue-600 text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-blue-500/30 hover:bg-blue-700">Simpan</button>
             </div>
-          </div>
-          <div>
-            <label class="text-xs font-bold text-slate-400 uppercase ml-1"
-              >Harga Jual</label
-            >
-            <input
-              type="text"
-              inputmode="numeric"
-              id="editHarga"
-              class="w-full mt-1.5 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none font-bold text-blue-600 text-lg"
-            />
-          </div>
         </div>
-        <div class="flex gap-3">
-          <button
-            onclick="tutupModal()"
-            class="w-1/3 bg-slate-100 text-slate-500 font-bold py-3.5 rounded-2xl hover:bg-slate-200"
-          >
-            Batal
-          </button>
-          <button
-            id="btnSimpanEdit"
-            onclick="simpanEdit()"
-            class="w-2/3 bg-blue-600 text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-blue-500/30 hover:bg-blue-700"
-          >
-            Simpan
-          </button>
-        </div>
-      </div>
     </div>
 
     <!-- MODAL SEMUA RIWAYAT (ARSIP) -->
-    <div
-      id="modalArsip"
-      class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4 transition-all duration-300"
-    >
-      <div
-        class="bg-white rounded-[2rem] p-6 w-full max-w-lg shadow-2xl animate-modal-in border border-slate-100 relative h-[80vh] flex flex-col"
-      >
-        <div
-          class="flex justify-between items-center mb-5 border-b border-slate-100 pb-4"
-        >
-          <h3
-            class="font-extrabold text-xl text-slate-800 flex items-center gap-2"
-          >
-            <svg
-              class="w-6 h-6 text-slate-500"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2.5"
-                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-              ></path>
-            </svg>
-            Semua Riwayat
-          </h3>
-          <button
-            onclick="tutupArsip()"
-            class="w-8 h-8 flex items-center justify-center bg-red-50 text-red-500 rounded-xl font-bold hover:bg-red-500 hover:text-white transition-colors"
-          >
-            X
-          </button>
+    <div id="modalArsip" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4 transition-all duration-300">
+        <div class="bg-white rounded-[2rem] p-6 w-full max-w-lg shadow-2xl animate-modal-in border border-slate-100 relative h-[80vh] flex flex-col">
+            <div class="flex justify-between items-center mb-5 border-b border-slate-100 pb-4">
+                <h3 class="font-extrabold text-xl text-slate-800 flex items-center gap-2">
+                    <svg class="w-6 h-6 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Semua Riwayat
+                </h3>
+                <button onclick="tutupArsip()" class="w-8 h-8 flex items-center justify-center bg-red-50 text-red-500 rounded-xl font-bold hover:bg-red-500 hover:text-white transition-colors">X</button>
+            </div>
+            <div id="arsipFullList" class="flex-1 overflow-y-auto space-y-4 pr-1"></div>
         </div>
-        <div
-          id="arsipFullList"
-          class="flex-1 overflow-y-auto space-y-4 pr-1"
-        ></div>
-      </div>
     </div>
 
     <script>
-      const API_URL =
-        "https://script.google.com/macros/s/AKfycbwv8oETI4cDFYp4f2MHQWvMuTKs5ZHpYYqC6EcNavfy4AsM-2ZIIXtvo7iWmc25JfoY/exec";
-      const formatRupiah = (angka) => "Rp " + angka.toLocaleString("id-ID");
-      let databaseBarang = JSON.parse(localStorage.getItem("db_warung")) || [];
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwv8oETI4cDFYp4f2MHQWvMuTKs5ZHpYYqC6EcNavfy4AsM-2ZIIXtvo7iWmc25JfoY/exec';
+        const formatRupiah = (angka) => 'Rp ' + angka.toLocaleString('id-ID');
+        let databaseBarang = JSON.parse(localStorage.getItem('db_warung')) || [];
+        
+        const getWaktu = () => new Date().toLocaleString('id-ID', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }).replace(/\./g, ':');
 
-      const getWaktu = () =>
-        new Date()
-          .toLocaleString("id-ID", {
-            day: "2-digit",
-            month: "short",
-            hour: "2-digit",
-            minute: "2-digit",
-          })
-          .replace(/\./g, ":");
-
-      function toggleSidebar() {
-        document
-          .getElementById("sidebar")
-          .classList.toggle("-translate-x-full");
-        document.getElementById("sidebarOverlay").classList.toggle("hidden");
-      }
-
-      function switchMenu(viewId, btnEl) {
-        document.getElementById("view-keuangan").classList.add("hidden");
-        document.getElementById("view-stok").classList.add("hidden");
-        document.getElementById(viewId).classList.remove("hidden");
-        document.getElementById(viewId).classList.add("block");
-        document.querySelectorAll(".menu-btn").forEach((btn) => {
-          btn.classList.remove(
-            "bg-emerald-500",
-            "text-white",
-            "shadow-lg",
-            "shadow-emerald-500/30",
-          );
-          btn.classList.add("text-slate-500");
-        });
-        btnEl.classList.remove("text-slate-500");
-        btnEl.classList.add(
-          "bg-emerald-500",
-          "text-white",
-          "shadow-lg",
-          "shadow-emerald-500/30",
-        );
-        if (window.innerWidth < 1024) toggleSidebar();
-      }
-
-      async function ambilDataDariCloud() {
-        try {
-          const res = await fetch(API_URL);
-          const data = await res.json();
-          if (data.barang && data.barang.length > 0) {
-            databaseBarang = data.barang;
-            localStorage.setItem("db_warung", JSON.stringify(databaseBarang));
-          }
-          if (data.riwayat)
-            localStorage.setItem(
-              "riwayat_warung",
-              JSON.stringify(data.riwayat),
-            );
-          updateStatusUI(
-            '<svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>',
-            '<span class="hidden sm:inline">Sinkron</span>',
-          );
-          renderManajemenStokData(databaseBarang);
-          muatKeuangan();
-        } catch (err) {
-          updateStatusUI(
-            '<svg class="w-4 h-4 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>',
-            '<span class="hidden sm:inline">Offline</span>',
-          );
-          renderManajemenStokData(databaseBarang);
-          muatKeuangan();
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+            document.getElementById('sidebarOverlay').classList.toggle('hidden');
         }
-      }
 
-      async function simpanKeCloud() {
-        updateStatusUI(
-          '<svg class="w-4 h-4 text-blue-500 animate-spin shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>',
-          '<span class="hidden sm:inline">Menyimpan...</span>',
-        );
-        const payload = {
-          action: "simpan_semua",
-          barang: JSON.parse(localStorage.getItem("db_warung")) || [],
-          riwayat: JSON.parse(localStorage.getItem("riwayat_warung")) || [],
-        };
-        try {
-          await fetch(API_URL, {
-            method: "POST",
-            body: JSON.stringify(payload),
-          });
-          updateStatusUI(
-            '<svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>',
-            '<span class="hidden sm:inline">Sinkron</span>',
-          );
-        } catch (err) {
-          updateStatusUI(
-            '<svg class="w-4 h-4 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>',
-            '<span class="hidden sm:inline">Gagal</span>',
-          );
+        function switchMenu(viewId, btnEl) {
+            document.getElementById('view-keuangan').classList.add('hidden'); document.getElementById('view-stok').classList.add('hidden');
+            document.getElementById(viewId).classList.remove('hidden'); document.getElementById(viewId).classList.add('block');
+            
+            document.querySelectorAll('.menu-btn').forEach(btn => {
+                btn.classList.remove('bg-emerald-500', 'text-white', 'shadow-lg', 'shadow-emerald-500/30'); btn.classList.add('text-slate-500');
+            });
+            btnEl.classList.remove('text-slate-500'); btnEl.classList.add('bg-emerald-500', 'text-white', 'shadow-lg', 'shadow-emerald-500/30');
+            if(window.innerWidth < 1024) toggleSidebar();
         }
-      }
 
-      function updateStatusUI(icon, teks) {
-        ["syncStatus", "syncStatusDesktop"].forEach((id) => {
-          const el = document.getElementById(id);
-          if (el) {
-            el.className = `${id === "syncStatusDesktop" ? "bg-white shadow-sm border border-slate-200 text-slate-700" : "bg-slate-50 border border-slate-200 text-slate-600"} px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-bold flex items-center gap-1.5 transition-all`;
-            el.innerHTML = `${icon} ${teks}`;
-          }
-        });
-      }
-
-      // ==== LOGIKA BUKU BESAR & AKUMULASI (SEMPURNA) ====
-      function muatKeuangan() {
-        let riwayatLengkap =
-          JSON.parse(localStorage.getItem("riwayat_warung")) || [];
-
-        let masukHariIni = 0,
-          keluarHariIni = 0,
-          hutangHariIni = 0;
-        let masukSemua = 0,
-          keluarSemua = 0,
-          hutangSemua = 0;
-
-        let riwayatHariIni = [];
-        let batasHariIni = false;
-
-        for (let i = 0; i < riwayatLengkap.length; i++) {
-          let r = riwayatLengkap[i];
-
-          if (r.tipe === "Tutup Buku") {
-            batasHariIni = true;
-            continue;
-          }
-
-          // Hitung Untuk Semua Waktu (Keseluruhan)
-          if (r.tipe === "Masuk") masukSemua += r.nominal;
-          else if (r.tipe === "Keluar") keluarSemua += r.nominal;
-          else if (r.tipe === "Hutang") hutangSemua += r.nominal;
-          else if (r.tipe === "Pelunasan") {
-            hutangSemua -= r.nominal;
-            masukSemua += r.nominal;
-          }
-
-          // Hitung Untuk Hari Ini (Sebelum batas Tutup Buku)
-          if (!batasHariIni) {
-            riwayatHariIni.push(r);
-            if (r.tipe === "Masuk") masukHariIni += r.nominal;
-            else if (r.tipe === "Keluar") keluarHariIni += r.nominal;
-            else if (r.tipe === "Hutang") hutangHariIni += r.nominal;
-            else if (r.tipe === "Pelunasan") {
-              hutangHariIni -= r.nominal;
-              masukHariIni += r.nominal;
+        async function ambilDataDariCloud() {
+            try {
+                const res = await fetch(API_URL); const data = await res.json();
+                if (data.barang && data.barang.length > 0) { databaseBarang = data.barang; localStorage.setItem('db_warung', JSON.stringify(databaseBarang)); }
+                if (data.riwayat) localStorage.setItem('riwayat_warung', JSON.stringify(data.riwayat));
+                updateStatusUI('<svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>', '<span class="hidden sm:inline">Sinkron</span>');
+                renderManajemenStokData(databaseBarang); muatKeuangan();
+            } catch (err) {
+                updateStatusUI('<svg class="w-4 h-4 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>', '<span class="hidden sm:inline">Offline</span>');
+                renderManajemenStokData(databaseBarang); muatKeuangan();
             }
-          }
         }
 
-        // Update UI Hari Ini
-        document.getElementById("txtMasuk").innerText =
-          formatRupiah(masukHariIni);
-        document.getElementById("txtKeluar").innerText =
-          formatRupiah(keluarHariIni);
-        document.getElementById("txtLaci").innerText = formatRupiah(
-          masukHariIni - keluarHariIni,
-        );
-        document.getElementById("txtHutang").innerText = formatRupiah(
-          Math.max(0, hutangSemua),
-        ); // Hutang selalu tampil total yg belum lunas
-
-        // Update UI Keseluruhan
-        document.getElementById("txtMasukSemua").innerText =
-          formatRupiah(masukSemua);
-        document.getElementById("txtBersihSemua").innerText = formatRupiah(
-          masukSemua - keluarSemua,
-        );
-
-        renderRiwayat(riwayatHariIni);
-      }
-
-      function catatPengeluaran() {
-        let nomInput = prompt("Nominal pengeluaran (contoh: 15000):");
-        if (!nomInput) return;
-        let nom = parseInt(nomInput.replace(/[^0-9]/g, ""));
-        if (isNaN(nom) || nom <= 0)
-          return alert("❌ Nominal harus angka valid!");
-        let ket = prompt("Uang keluar untuk apa?");
-        if (!ket) return;
-
-        let rw = JSON.parse(localStorage.getItem("riwayat_warung")) || [];
-        rw.unshift({
-          id: Date.now(),
-          waktu: getWaktu(),
-          tipe: "Keluar",
-          keterangan: ket,
-          nominal: nom,
-        });
-        localStorage.setItem("riwayat_warung", JSON.stringify(rw));
-        muatKeuangan();
-        simpanKeCloud();
-      }
-
-      function catatPelunasan() {
-        let nm = prompt("Nama pelanggan yang bayar kasbon:");
-        if (!nm) return;
-        let nomInput = prompt(
-          `Berapa nominal yang dibayar ${nm}? (Cth: 20000)`,
-        );
-        if (!nomInput) return;
-        let nom = parseInt(nomInput.replace(/[^0-9]/g, ""));
-        if (isNaN(nom) || nom <= 0)
-          return alert("❌ Nominal harus angka valid!");
-
-        let rw = JSON.parse(localStorage.getItem("riwayat_warung")) || [];
-        rw.unshift({
-          id: Date.now(),
-          waktu: getWaktu(),
-          tipe: "Pelunasan",
-          keterangan: `Lunas: ${nm}`,
-          nominal: nom,
-        });
-        localStorage.setItem("riwayat_warung", JSON.stringify(rw));
-        muatKeuangan();
-        simpanKeCloud();
-      }
-
-      function hapusRiwayatItem(id) {
-        if (confirm("Yakin ingin MENGHAPUS catatan transaksi ini?")) {
-          let rw = JSON.parse(localStorage.getItem("riwayat_warung")) || [];
-          rw = rw.filter((r) => r.id !== id);
-          localStorage.setItem("riwayat_warung", JSON.stringify(rw));
-          muatKeuangan();
-          simpanKeCloud();
-          if (
-            !document.getElementById("modalArsip").classList.contains("hidden")
-          )
-            renderArsipLengkap();
+        async function simpanKeCloud() {
+            updateStatusUI('<svg class="w-4 h-4 text-blue-500 animate-spin shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>', '<span class="hidden sm:inline">Menyimpan...</span>');
+            const payload = { action: "simpan_semua", barang: JSON.parse(localStorage.getItem('db_warung')) || [], riwayat: JSON.parse(localStorage.getItem('riwayat_warung')) || [] };
+            try {
+                await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+                updateStatusUI('<svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>', '<span class="hidden sm:inline">Sinkron</span>');
+            } catch (err) { updateStatusUI('<svg class="w-4 h-4 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>', '<span class="hidden sm:inline">Gagal</span>'); }
         }
-      }
 
-      function renderRiwayat(riwayatHariIniArray) {
-        const container = document.getElementById("riwayatList");
-        if (riwayatHariIniArray.length === 0)
-          return (container.innerHTML = `<p class="text-center text-slate-400 text-sm py-4">Belum ada transaksi hari ini</p>`);
+        function updateStatusUI(icon, teks) {
+            ['syncStatus', 'syncStatusDesktop'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) {
+                    el.className = `${id === 'syncStatusDesktop' ? 'bg-white shadow-sm border border-slate-200 text-slate-700' : 'bg-slate-50 border border-slate-200 text-slate-600'} px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-bold flex items-center gap-1.5 transition-all`;
+                    el.innerHTML = `${icon} ${teks}`;
+                }
+            });
+        }
 
-        container.innerHTML = "";
-        riwayatHariIniArray.forEach((log) => {
-          let isMasuk = log.tipe === "Masuk" || log.tipe === "Pelunasan";
-          let colorClass = isMasuk
-            ? "text-emerald-500"
-            : log.tipe === "Keluar"
-              ? "text-red-500"
-              : "text-amber-500";
-          let symbol = isMasuk ? "+" : log.tipe === "Keluar" ? "-" : "📒 ";
+        function muatKeuangan() {
+            let riwayatLengkap = JSON.parse(localStorage.getItem('riwayat_warung')) || [];
+            let masukHariIni = 0, keluarHariIni = 0, hutangHariIni = 0;
+            let masukSemua = 0, keluarSemua = 0, hutangSemua = 0;
+            let riwayatHariIni = [];
+            let batasHariIni = false;
+            
+            for(let i = 0; i < riwayatLengkap.length; i++) {
+                let r = riwayatLengkap[i];
+                if(r.tipe === 'Tutup Buku') { batasHariIni = true; continue; }
+                
+                if(r.tipe === 'Masuk') masukSemua += r.nominal;
+                else if(r.tipe === 'Keluar') keluarSemua += r.nominal;
+                else if(r.tipe === 'Hutang') hutangSemua += r.nominal;
+                else if(r.tipe === 'Pelunasan') { hutangSemua -= r.nominal; masukSemua += r.nominal; }
 
-          container.innerHTML += `
+                if(!batasHariIni) {
+                    riwayatHariIni.push(r);
+                    if(r.tipe === 'Masuk') masukHariIni += r.nominal;
+                    else if(r.tipe === 'Keluar') keluarHariIni += r.nominal;
+                    else if(r.tipe === 'Hutang') hutangHariIni += r.nominal;
+                    else if(r.tipe === 'Pelunasan') { hutangHariIni -= r.nominal; masukHariIni += r.nominal; }
+                }
+            }
+
+            document.getElementById('txtMasuk').innerText = formatRupiah(masukHariIni);
+            document.getElementById('txtKeluar').innerText = formatRupiah(keluarHariIni);
+            document.getElementById('txtLaci').innerText = formatRupiah(masukHariIni - keluarHariIni);
+            document.getElementById('txtHutang').innerText = formatRupiah(Math.max(0, hutangSemua)); 
+            
+            document.getElementById('txtMasukSemua').innerText = formatRupiah(masukSemua);
+            document.getElementById('txtBersihSemua').innerText = formatRupiah(masukSemua - keluarSemua);
+            
+            renderRiwayat(riwayatHariIni);
+        }
+
+        function catatPengeluaran() {
+            let nomInput = prompt("Nominal pengeluaran (contoh: 15000):"); if(!nomInput) return;
+            let nom = parseInt(nomInput.replace(/[^0-9]/g, '')); if(isNaN(nom) || nom <= 0) return alert("❌ Nominal harus angka valid!");
+            let ket = prompt("Uang keluar untuk apa?"); if(!ket) return;
+            
+            let rw = JSON.parse(localStorage.getItem('riwayat_warung')) || [];
+            rw.unshift({ id: Date.now(), waktu: getWaktu(), tipe: 'Keluar', keterangan: ket, nominal: nom });
+            localStorage.setItem('riwayat_warung', JSON.stringify(rw));
+            muatKeuangan(); simpanKeCloud();
+        }
+
+        function catatPelunasan() {
+            let nm = prompt("Nama pelanggan yang bayar kasbon:"); if(!nm) return;
+            let nomInput = prompt(`Berapa nominal yang dibayar ${nm}? (Cth: 20000)`); if(!nomInput) return;
+            let nom = parseInt(nomInput.replace(/[^0-9]/g, '')); if(isNaN(nom) || nom <= 0) return alert("❌ Nominal harus angka valid!");
+            
+            let rw = JSON.parse(localStorage.getItem('riwayat_warung')) || [];
+            rw.unshift({ id: Date.now(), waktu: getWaktu(), tipe: 'Pelunasan', keterangan: `Lunas: ${nm}`, nominal: nom });
+            localStorage.setItem('riwayat_warung', JSON.stringify(rw));
+            muatKeuangan(); simpanKeCloud();
+        }
+
+        function hapusRiwayatItem(id) {
+            if(confirm("Yakin ingin MENGHAPUS catatan transaksi ini? Uang di laci akan dihitung ulang.")) {
+                let rw = JSON.parse(localStorage.getItem('riwayat_warung')) || [];
+                rw = rw.filter(r => r.id !== id);
+                localStorage.setItem('riwayat_warung', JSON.stringify(rw));
+                muatKeuangan(); simpanKeCloud();
+                if(!document.getElementById('modalArsip').classList.contains('hidden')) renderArsipLengkap();
+            }
+        }
+
+        function renderRiwayat(riwayatHariIniArray) {
+            const container = document.getElementById('riwayatList');
+            if(riwayatHariIniArray.length === 0) return container.innerHTML = `<p class="text-center text-slate-400 text-sm py-4">Belum ada transaksi hari ini</p>`;
+            
+            container.innerHTML = '';
+            riwayatHariIniArray.forEach(log => {
+                let isMasuk = (log.tipe === 'Masuk' || log.tipe === 'Pelunasan');
+                let colorClass = isMasuk ? 'text-emerald-500' : (log.tipe === 'Keluar' ? 'text-red-500' : 'text-amber-500');
+                let symbol = isMasuk ? '+' : (log.tipe === 'Keluar' ? '-' : '📒 ');
+                
+                container.innerHTML += `
                     <div class="flex justify-between items-start border-b border-slate-50 pb-3 last:border-0 group">
                         <div class="pr-2 flex-1">
                             <p class="text-[10px] md:text-xs font-bold text-slate-400">${log.waktu}</p>
@@ -989,62 +390,40 @@
                             </button>
                         </div>
                     </div>`;
-        });
-      }
-
-      // ==== FITUR ARSIP & TUTUP BUKU ====
-      async function resetKas() {
-        if (
-          confirm(
-            "Tutup Buku akan mengarsipkan riwayat hari ini dan me-reset Uang Laci jadi Rp 0 untuk persiapan besok.\n\nLanjutkan?",
-          )
-        ) {
-          let rw = JSON.parse(localStorage.getItem("riwayat_warung")) || [];
-          rw.unshift({
-            id: Date.now(),
-            waktu: getWaktu(),
-            tipe: "Tutup Buku",
-            keterangan: "--- TUTUP BUKU HARIAN ---",
-            nominal: 0,
-          });
-          localStorage.setItem("riwayat_warung", JSON.stringify(rw));
-          muatKeuangan();
-          simpanKeCloud();
+            });
         }
-      }
 
-      function bukaArsip() {
-        renderArsipLengkap();
-        document.getElementById("modalArsip").classList.remove("hidden");
-      }
-      function tutupArsip() {
-        document.getElementById("modalArsip").classList.add("hidden");
-      }
+        async function resetKas() {
+            if(confirm("Tutup Buku akan mengarsipkan riwayat hari ini dan me-reset Uang Laci jadi Rp 0 untuk persiapan besok.\n\nLanjutkan?")) { 
+                let rw = JSON.parse(localStorage.getItem('riwayat_warung')) || [];
+                rw.unshift({ id: Date.now(), waktu: getWaktu(), tipe: 'Tutup Buku', keterangan: '--- TUTUP BUKU HARIAN ---', nominal: 0 });
+                localStorage.setItem('riwayat_warung', JSON.stringify(rw));
+                muatKeuangan(); simpanKeCloud(); 
+            }
+        }
 
-      function renderArsipLengkap() {
-        const container = document.getElementById("arsipFullList");
-        let rw = JSON.parse(localStorage.getItem("riwayat_warung")) || [];
-        if (rw.length === 0)
-          return (container.innerHTML = `<p class="text-center text-slate-400 text-sm py-4">Belum ada sejarah transaksi</p>`);
+        function bukaArsip() { renderArsipLengkap(); document.getElementById('modalArsip').classList.remove('hidden'); }
+        function tutupArsip() { document.getElementById('modalArsip').classList.add('hidden'); }
 
-        container.innerHTML = "";
-        rw.forEach((log) => {
-          if (log.tipe === "Tutup Buku") {
-            container.innerHTML += `
+        function renderArsipLengkap() {
+            const container = document.getElementById('arsipFullList');
+            let rw = JSON.parse(localStorage.getItem('riwayat_warung')) || [];
+            if(rw.length === 0) return container.innerHTML = `<p class="text-center text-slate-400 text-sm py-4">Belum ada sejarah transaksi</p>`;
+            
+            container.innerHTML = '';
+            rw.forEach(log => {
+                if(log.tipe === 'Tutup Buku') {
+                    container.innerHTML += `
                         <div class="flex items-center justify-center gap-4 py-4 my-2 opacity-70">
                             <div class="h-px bg-slate-200 flex-1"></div>
                             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 px-3 py-1 rounded-full">${log.waktu} - Tutup Buku</span>
                             <div class="h-px bg-slate-200 flex-1"></div>
                         </div>`;
-          } else {
-            let isMasuk = log.tipe === "Masuk" || log.tipe === "Pelunasan";
-            let colorClass = isMasuk
-              ? "text-emerald-500"
-              : log.tipe === "Keluar"
-                ? "text-red-500"
-                : "text-amber-500";
-            let symbol = isMasuk ? "+" : log.tipe === "Keluar" ? "-" : "📒 ";
-            container.innerHTML += `
+                } else {
+                    let isMasuk = (log.tipe === 'Masuk' || log.tipe === 'Pelunasan');
+                    let colorClass = isMasuk ? 'text-emerald-500' : (log.tipe === 'Keluar' ? 'text-red-500' : 'text-amber-500');
+                    let symbol = isMasuk ? '+' : (log.tipe === 'Keluar' ? '-' : '📒 ');
+                    container.innerHTML += `
                         <div class="flex justify-between items-start bg-slate-50 p-3 rounded-2xl border border-slate-100">
                             <div class="pr-2 flex-1">
                                 <p class="text-[10px] font-bold text-slate-400">${log.waktu}</p>
@@ -1057,32 +436,26 @@
                                 </button>
                             </div>
                         </div>`;
-          }
-        });
-      }
+                }
+            });
+        }
 
-      // ==== FITUR SEARCH ADMIN DENGAN DEBOUNCE ====
-      let adminSearchTimeout;
-      function debounceAdminSearch() {
-        clearTimeout(adminSearchTimeout);
-        adminSearchTimeout = setTimeout(filterAdmin, 250);
-      }
+        let adminSearchTimeout;
+        function debounceAdminSearch() {
+            clearTimeout(adminSearchTimeout); adminSearchTimeout = setTimeout(filterAdmin, 250);
+        }
 
-      function filterAdmin() {
-        const keyword = document
-          .getElementById("searchAdmin")
-          .value.toLowerCase();
-        const filtered = databaseBarang.filter((item) =>
-          item.nama.toLowerCase().includes(keyword),
-        );
-        renderManajemenStokData(filtered);
-      }
+        function filterAdmin() {
+            const keyword = document.getElementById('searchAdmin').value.toLowerCase();
+            const filtered = databaseBarang.filter(item => item.nama.toLowerCase().includes(keyword));
+            renderManajemenStokData(filtered);
+        }
 
-      function renderManajemenStokData(dataArray) {
-        const container = document.getElementById("stockManagementList");
-        container.innerHTML = "";
-        dataArray.forEach((item) => {
-          container.innerHTML += `
+        function renderManajemenStokData(dataArray) {
+            const container = document.getElementById('stockManagementList');
+            container.innerHTML = '';
+            dataArray.forEach(item => {
+                container.innerHTML += `
                     <div class="bg-slate-50 p-4 md:p-5 rounded-2xl md:rounded-3xl border border-slate-100 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                         <div class="flex-1">
                             <span class="text-[10px] bg-white border border-slate-200 text-slate-500 px-2.5 py-1 rounded-md font-bold uppercase">${item.kategori}</span>
@@ -1090,7 +463,7 @@
                             <div class="flex items-center gap-3 mt-1">
                                 <p class="text-sm md:text-base font-black text-emerald-500">${formatRupiah(item.harga)}</p>
                                 <span class="w-1 h-1 bg-slate-300 rounded-full"></span>
-                                <p class="text-[10px] md:text-xs font-bold ${item.stok <= 5 ? "text-red-500" : "text-slate-500"}">Stok: ${item.stok}</p>
+                                <p class="text-[10px] md:text-xs font-bold ${item.stok <= 5 ? 'text-red-500' : 'text-slate-500'}">Stok: ${item.stok}</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
@@ -1104,125 +477,73 @@
                             </button>
                         </div>
                     </div>`;
-        });
-      }
-
-      async function tambahBarang() {
-        const btn = document.getElementById("btnSimpanBarangBaru");
-        const nama = document.getElementById("newNama").value.trim(),
-          kat = document.getElementById("newKategori").value,
-          hrg = parseInt(
-            document.getElementById("newHarga").value.replace(/[^0-9]/g, ""),
-          ),
-          stk = parseInt(
-            document.getElementById("newStok").value.replace(/[^0-9]/g, ""),
-          );
-        if (!nama || isNaN(hrg) || hrg <= 0 || isNaN(stk))
-          return alert(
-            "❌ Pastikan Nama, Harga, dan Stok diisi angka yang benar!",
-          );
-
-        btn.innerHTML = "⏳ Menyimpan...";
-        btn.classList.add("opacity-70", "pointer-events-none");
-        databaseBarang.push({
-          id: Math.floor(Math.random() * 1000000),
-          nama,
-          kategori: kat,
-          harga: hrg,
-          stok: stk,
-        });
-        localStorage.setItem("db_warung", JSON.stringify(databaseBarang));
-        document.getElementById("newNama").value = "";
-        document.getElementById("newHarga").value = "";
-        document.getElementById("newStok").value = "";
-
-        renderManajemenStokData(databaseBarang);
-        document.getElementById("searchAdmin").value = "";
-        simpanKeCloud();
-
-        btn.innerHTML = "✅ Berhasil!";
-        setTimeout(() => {
-          btn.innerHTML = "Simpan ke Sistem";
-          btn.classList.remove("opacity-70", "pointer-events-none");
-        }, 1500);
-      }
-
-      async function updateStok(id) {
-        let inputEl = document.getElementById(`tambahStok_${id}`);
-        let jml = parseInt(inputEl.value.replace(/[^0-9\-]/g, ""));
-        if (isNaN(jml) || jml === 0)
-          return alert("❌ Masukkan angka stok yang benar!");
-        let b = databaseBarang.find((b) => parseInt(b.id) === parseInt(id));
-        if (b) {
-          b.stok = Math.max(0, b.stok + jml);
-          localStorage.setItem("db_warung", JSON.stringify(databaseBarang));
-          inputEl.value = "";
-          filterAdmin();
-          simpanKeCloud();
+            });
         }
-      }
 
-      function bukaModal(id) {
-        let item = databaseBarang.find((b) => parseInt(b.id) === parseInt(id));
-        if (item) {
-          document.getElementById("editId").value = item.id;
-          document.getElementById("editNama").value = item.nama;
-          document.getElementById("editKategori").value =
-            item.kategori || "Sembako";
-          document.getElementById("editHarga").value = item.harga;
-          document.getElementById("editStok").value = item.stok;
-          document.getElementById("modalEdit").classList.remove("hidden");
+        async function tambahBarang() {
+            const btn = document.getElementById('btnSimpanBarangBaru');
+            const nama = document.getElementById('newNama').value.trim(), kat = document.getElementById('newKategori').value, hrg = parseInt(document.getElementById('newHarga').value.replace(/[^0-9]/g, '')), stk = parseInt(document.getElementById('newStok').value.replace(/[^0-9]/g, ''));
+            if(!nama || isNaN(hrg) || hrg<=0 || isNaN(stk)) return alert("❌ Pastikan Nama, Harga, dan Stok diisi angka yang benar!");
+            
+            btn.innerHTML = '⏳ Menyimpan...'; btn.classList.add('opacity-70', 'pointer-events-none');
+            databaseBarang.push({ id: Math.floor(Math.random()*1000000), nama, kategori: kat, harga: hrg, stok: stk });
+            localStorage.setItem('db_warung', JSON.stringify(databaseBarang)); 
+            document.getElementById('newNama').value=''; document.getElementById('newHarga').value=''; document.getElementById('newStok').value=''; 
+            
+            renderManajemenStokData(databaseBarang); document.getElementById('searchAdmin').value = '';
+            simpanKeCloud();
+
+            btn.innerHTML = '✅ Berhasil!'; setTimeout(() => { btn.innerHTML = 'Simpan ke Sistem'; btn.classList.remove('opacity-70', 'pointer-events-none'); }, 1500);
         }
-      }
-      function tutupModal() {
-        document.getElementById("modalEdit").classList.add("hidden");
-      }
 
-      async function simpanEdit() {
-        const btn = document.getElementById("btnSimpanEdit");
-        let id = parseInt(document.getElementById("editId").value),
-          nama = document.getElementById("editNama").value.trim(),
-          kat = document.getElementById("editKategori").value,
-          hrg = parseInt(
-            document.getElementById("editHarga").value.replace(/[^0-9]/g, ""),
-          ),
-          stk = parseInt(
-            document.getElementById("editStok").value.replace(/[^0-9]/g, ""),
-          );
-        if (!nama || isNaN(hrg) || isNaN(stk))
-          return alert("❌ Isi form dengan benar!");
-        let i = databaseBarang.findIndex((b) => parseInt(b.id) === id);
-        if (i !== -1) {
-          btn.innerHTML = "Menyimpan...";
-          databaseBarang[i].nama = nama;
-          databaseBarang[i].kategori = kat;
-          databaseBarang[i].harga = hrg;
-          databaseBarang[i].stok = Math.max(0, stk);
-          localStorage.setItem("db_warung", JSON.stringify(databaseBarang));
-          filterAdmin();
-          simpanKeCloud();
-          btn.innerHTML = "Simpan";
-          tutupModal();
+        async function updateStok(id) {
+            let inputEl = document.getElementById(`tambahStok_${id}`); let jml = parseInt(inputEl.value.replace(/[^0-9\-]/g, '')); 
+            if (isNaN(jml) || jml === 0) return alert("❌ Masukkan angka stok yang benar!");
+            let b = databaseBarang.find(b => parseInt(b.id) === parseInt(id));
+            if (b) { b.stok = Math.max(0, b.stok + jml); localStorage.setItem('db_warung', JSON.stringify(databaseBarang)); inputEl.value=''; filterAdmin(); simpanKeCloud(); }
         }
-      }
 
-      async function hapusBarang(id) {
-        if (confirm("Yakin hapus data barang ini dari sistem?")) {
-          databaseBarang = databaseBarang.filter(
-            (b) => parseInt(b.id) !== parseInt(id),
-          );
-          localStorage.setItem("db_warung", JSON.stringify(databaseBarang));
-          filterAdmin();
-          simpanKeCloud();
+        function bukaModal(id) {
+            let item = databaseBarang.find(b => parseInt(b.id) === parseInt(id));
+            if(item) {
+                document.getElementById('editId').value = item.id; document.getElementById('editNama').value = item.nama; document.getElementById('editKategori').value = item.kategori || 'Sembako';
+                document.getElementById('editHarga').value = item.harga; document.getElementById('editStok').value = item.stok;
+                document.getElementById('modalEdit').classList.remove('hidden');
+            }
         }
-      }
+        function tutupModal() { document.getElementById('modalEdit').classList.add('hidden'); }
 
-      function logout() {
-        sessionStorage.removeItem("isLoggedIn");
-        window.location.href = "login.html";
-      }
+        async function simpanEdit() {
+            const btn = document.getElementById('btnSimpanEdit');
+            let id = parseInt(document.getElementById('editId').value), nama = document.getElementById('editNama').value.trim(), kat = document.getElementById('editKategori').value, hrg = parseInt(document.getElementById('editHarga').value.replace(/[^0-9]/g, '')), stk = parseInt(document.getElementById('editStok').value.replace(/[^0-9]/g, ''));
+            if(!nama || isNaN(hrg) || isNaN(stk)) return alert("❌ Isi form dengan benar!");
+            let i = databaseBarang.findIndex(b => parseInt(b.id) === id);
+            if(i !== -1) { 
+                btn.innerHTML = 'Menyimpan...';
+                databaseBarang[i].nama = nama; databaseBarang[i].kategori = kat; databaseBarang[i].harga = hrg; databaseBarang[i].stok = Math.max(0, stk); 
+                localStorage.setItem('db_warung', JSON.stringify(databaseBarang)); 
+                filterAdmin(); simpanKeCloud(); btn.innerHTML = 'Simpan'; tutupModal(); 
+            }
+        }
 
-      ambilDataDariCloud();
+        async function hapusBarang(id) {
+            if(confirm('Yakin hapus data barang ini dari sistem?')) { databaseBarang = databaseBarang.filter(b => parseInt(b.id) !== parseInt(id)); localStorage.setItem('db_warung', JSON.stringify(databaseBarang)); filterAdmin(); simpanKeCloud(); }
+        }
+
+        function logout() { sessionStorage.removeItem('isLoggedIn'); window.location.href = 'login.html'; }
+
+        ambilDataDariCloud();
     </script>
-  </body>
+
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('PWA Service Worker terdaftar!', reg))
+                    .catch(err => console.log('PWA Service Worker gagal!', err));
+            });
+        }
+    </script>
+</body>
 </html>
