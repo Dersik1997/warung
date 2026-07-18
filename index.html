@@ -117,11 +117,9 @@
 
         async function ambilDataDariCloud() {
             try {
-                // TAMBAHAN ANTI-CACHE (Biar HP nggak narik data lama/nyangkut)
-                const cacheBuster = "?nocache=" + new Date().getTime();
-                const response = await fetch(API_URL + cacheBuster);
+                // FIX: Gunakan cache: 'no-store' resmi dari browser (tanpa modifikasi URL yang diblokir Google)
+                const response = await fetch(API_URL, { cache: 'no-store' });
                 const data = await response.json();
-                
                 if (data.barang && data.barang.length > 0) {
                     databaseBarang = data.barang;
                     localStorage.setItem('db_warung', JSON.stringify(databaseBarang));
@@ -132,7 +130,7 @@
                 updateStatusUI('<svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>', '<span class="hidden sm:inline">Sinkron</span>');
             } catch (error) {
                 updateStatusUI('<svg class="w-4 h-4 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>', '<span class="hidden sm:inline">Offline</span>');
-                filterBarang();
+                filterBarang(); // Render pakai data lokal
             }
         }
 
@@ -284,7 +282,6 @@
         ambilDataDariCloud();
     </script>
     
-    <!-- PWA Service Worker Registration -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
